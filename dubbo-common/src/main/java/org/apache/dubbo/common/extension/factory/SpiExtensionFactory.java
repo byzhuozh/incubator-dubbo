@@ -22,14 +22,26 @@ import org.apache.dubbo.common.extension.SPI;
 
 /**
  * SpiExtensionFactory
+ *
+ * SPI ExtensionFactory 拓展实现类
  */
 public class SpiExtensionFactory implements ExtensionFactory {
 
+    /**
+     * 获得拓展对象
+     *
+     * @param type object type. 拓展接口
+     * @param name object name. 拓展名
+     * @param <T> 泛型
+     * @return 拓展对象
+     */
     @Override
     public <T> T getExtension(Class<T> type, String name) {
-        if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {
+        if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {     // 校验是 @SPI
             ExtensionLoader<T> loader = ExtensionLoader.getExtensionLoader(type);
+            // 加载拓展接口对应的 ExtensionLoader 对象
             if (!loader.getSupportedExtensions().isEmpty()) {
+                // 加载拓展对象
                 return loader.getAdaptiveExtension();
             }
         }
