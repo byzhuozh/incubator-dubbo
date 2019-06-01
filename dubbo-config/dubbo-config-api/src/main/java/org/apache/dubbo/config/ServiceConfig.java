@@ -398,6 +398,12 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         }
     }
 
+    /**
+     * 基于单个协议，暴露服务
+     *
+     * @param protocolConfig 协议配置对象
+     * @param registryURLs 注册中心链接对象数组
+     */
     private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
         // 协议名
         String name = protocolConfig.getName();
@@ -453,6 +459,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                                         // one callback in the method
                                         if (argument.getIndex() != -1) {    // 指定单个参数的位置 + 类型
                                             if (argtypes[argument.getIndex()].getName().equals(argument.getType())) {
+                                                // 将 ArgumentConfig 对象，添加到 `map` 集合中。
                                                 appendParameters(map, argument, method.getName() + "." + argument.getIndex());
                                             } else {
                                                 throw new IllegalArgumentException("argument config error : the index attribute and type attribute not match :index :" + argument.getIndex() + ", type:" + argument.getType());
@@ -541,10 +548,13 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         // don't export when none is configured
         if (!Constants.SCOPE_NONE.equalsIgnoreCase(scope)) {
 
+            // 服务本地暴露
             // export to local if the config is not remote (export to remote only when config is remote)
             if (!Constants.SCOPE_REMOTE.equalsIgnoreCase(scope)) {
                 exportLocal(url);
             }
+
+            // 服务远程暴露
             // export to remote if the config is not local (export to local only when config is local)
             if (!Constants.SCOPE_LOCAL.equalsIgnoreCase(scope)) {
                 if (logger.isInfoEnabled()) {
@@ -552,8 +562,10 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                 }
                 if (registryURLs != null && !registryURLs.isEmpty()) {
                     for (URL registryURL : registryURLs) {
+                        // "dynamic" ：服务是否动态注册，如果设为false，注册后将显示后disable状态，需人工启用，并且服务提供者停止时，也不会自动取消册，需人工禁用。
                         url = url.addParameterIfAbsent(Constants.DYNAMIC_KEY, registryURL.getParameter(Constants.DYNAMIC_KEY));
-                        URL monitorUrl = loadMonitor(registryURL);
+                        // 获得监控中心 URL
+                        URL monitorUrl = loadMonitor(registryURL);  // 监控
                         if (monitorUrl != null) {
                             url = url.addParameterAndEncoded(Constants.MONITOR_KEY, monitorUrl.toFullString());
                         }
@@ -567,17 +579,25 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
                             registryURL = registryURL.addParameter(Constants.PROXY_KEY, proxy);
                         }
 
+                        // 使用 ProxyFactory 创建 Invoker 对象
                         Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, registryURL.addParameterAndEncoded(Constants.EXPORT_KEY, url.toFullString()));
+
+                        // 创建 DelegateProviderMetaDataInvoker 对象
                         DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
 
+                        // 使用 Protocol 暴露 Invoker 对象
                         Exporter<?> exporter = protocol.export(wrapperInvoker);
+                        // 添加到 `exporters
                         exporters.add(exporter);
                     }
-                } else {
+                } else {    // 用于被服务消费者直连服务提供者，参见文档 http://dubbo.apache.org/zh-cn/docs/user/demos/explicit-target.html 。主要用于开发测试环境使用。
+                    // 使用 ProxyFactory 创建 Invoker 对象
                     Invoker<?> invoker = proxyFactory.getInvoker(ref, (Class) interfaceClass, url);
+                    // 创建 DelegateProviderMetaDataInvoker 对象
                     DelegateProviderMetaDataInvoker wrapperInvoker = new DelegateProviderMetaDataInvoker(invoker, this);
-
+                    // 使用 Protocol 暴露 Invoker 对象
                     Exporter<?> exporter = protocol.export(wrapperInvoker);
+                    // 添加到 `exporters`
                     exporters.add(exporter);
                 }
             }
