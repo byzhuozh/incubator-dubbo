@@ -40,6 +40,8 @@ import org.springframework.context.annotation.Configuration;
  * @see ProviderConfig
  * @see ConsumerConfig
  * @since 2.5.8
+ *
+ * Dubbo AbstractConfig 配置类
  */
 public class DubboConfigConfiguration {
 

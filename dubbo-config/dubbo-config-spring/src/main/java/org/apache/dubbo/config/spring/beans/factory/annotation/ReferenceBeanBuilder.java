@@ -36,6 +36,8 @@ import static org.apache.dubbo.config.spring.util.ObjectUtils.of;
  * {@link ReferenceBean} Builder
  *
  * @since 2.5.7
+ *
+ * 继承 AbstractAnnotationConfigBeanBuilder 抽象类，ReferenceBean 的构建器
  */
 class ReferenceBeanBuilder extends AbstractAnnotationConfigBeanBuilder<Reference, ReferenceBean> {
 

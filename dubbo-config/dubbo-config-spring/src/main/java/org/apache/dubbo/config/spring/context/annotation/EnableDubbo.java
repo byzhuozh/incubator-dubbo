@@ -40,11 +40,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Documented
-@EnableDubboConfig
-@DubboComponentScan
+@EnableDubboConfig   // 开启 Dubbo Config
+@DubboComponentScan  // 扫描 Dubbo @Service 和 @Reference Bean
 public @interface EnableDubbo {
 
     /**
+     * 配置 @DubboComponentScan 注解，扫描的包
+     *
      * Base packages to scan for annotated @Service classes.
      * <p>
      * Use {@link #scanBasePackageClasses()} for a type-safe alternative to String-based
@@ -57,6 +59,8 @@ public @interface EnableDubbo {
     String[] scanBasePackages() default {};
 
     /**
+     * 配置 @DubboComponentScan 注解，扫描的类
+     *
      * Type-safe alternative to {@link #scanBasePackages()} for specifying the packages to
      * scan for annotated @Service classes. The package of each class specified will be
      * scanned.
@@ -69,6 +73,8 @@ public @interface EnableDubbo {
 
 
     /**
+     * 配置 @EnableDubboConfig 注解，配置是否绑定到多个 Spring Bean 上
+     *
      * It indicates whether {@link AbstractConfig} binding to multiple Spring Beans.
      *
      * @return the default value is <code>false</code>

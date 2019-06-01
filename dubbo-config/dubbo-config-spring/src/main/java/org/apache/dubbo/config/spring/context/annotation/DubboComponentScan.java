@@ -34,6 +34,8 @@ import java.lang.annotation.Target;
  * @see Service
  * @see Reference
  * @since 2.5.7
+ *
+ * 配置要扫描 @Service 和 @Reference 注解的包或者类们，从而创建对应的 Bean 对象
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -42,6 +44,8 @@ import java.lang.annotation.Target;
 public @interface DubboComponentScan {
 
     /**
+     * 和 {@link #basePackages()} 等价
+     *
      * Alias for the {@link #basePackages()} attribute. Allows for more concise annotation
      * declarations e.g.: {@code @DubboComponentScan("org.my.pkg")} instead of
      * {@code @DubboComponentScan(basePackages="org.my.pkg")}.
@@ -51,6 +55,8 @@ public @interface DubboComponentScan {
     String[] value() default {};
 
     /**
+     * 要扫描的包的数组
+     *
      * Base packages to scan for annotated @Service classes. {@link #value()} is an
      * alias for (and mutually exclusive with) this attribute.
      * <p>
@@ -62,6 +68,8 @@ public @interface DubboComponentScan {
     String[] basePackages() default {};
 
     /**
+     * 要扫描的类的数组
+     *
      * Type-safe alternative to {@link #basePackages()} for specifying the packages to
      * scan for annotated @Service classes. The package of each class specified will be
      * scanned.

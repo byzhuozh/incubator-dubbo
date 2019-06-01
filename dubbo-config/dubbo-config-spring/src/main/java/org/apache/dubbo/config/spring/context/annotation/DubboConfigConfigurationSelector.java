@@ -34,14 +34,16 @@ public class DubboConfigConfigurationSelector implements ImportSelector, Ordered
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
 
+        // 获得 @EnableDubboConfig 注解的属性
         AnnotationAttributes attributes = AnnotationAttributes.fromMap(
                 importingClassMetadata.getAnnotationAttributes(EnableDubboConfig.class.getName()));
-
+        // 获得 multiple 属性
         boolean multiple = attributes.getBoolean("multiple");
-
+        // 如果为 true ，则注册 DubboConfigConfiguration.Multiple Bean 对象
         if (multiple) {
             return of(DubboConfigConfiguration.Multiple.class.getName());
         } else {
+            // 如果为 false ，则注册 DubboConfigConfiguration.Single Bean 对象
             return of(DubboConfigConfiguration.Single.class.getName());
         }
     }
