@@ -25,6 +25,8 @@ import java.util.concurrent.Executor;
 
 /**
  * ThreadPool
+ *
+ * Dubbo SPI 拓展点，默认为 "fixed"
  */
 @SPI("fixed")
 public interface ThreadPool {
