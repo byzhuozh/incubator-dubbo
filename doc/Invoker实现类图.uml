@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.dubbo.rpc.Invoker</OriginalElement>
+  <nodes>
+    <node x="651.0" y="256.0">org.apache.dubbo.rpc.protocol.AbstractInvoker</node>
+    <node x="886.0" y="481.0">com.alibaba.dubbo.rpc.Invoker</node>
+    <node x="896.0" y="558.0">org.apache.dubbo.rpc.cluster.support.wrapper.MockClusterInvoker</node>
+    <node x="1076.0" y="440.0">com.alibaba.dubbo.rpc.Invoker.CompatibleInvoker</node>
+    <node x="665.0" y="434.0">org.apache.dubbo.rpc.support.DelegateInvoker</node>
+    <node x="925.0" y="246.0">org.apache.dubbo.registry.dubbo.RegistryProtocolTest.MockInvoker</node>
+    <node x="1114.0" y="786.0">org.apache.dubbo.rpc.support.BlockMyInvoker</node>
+    <node x="667.0" y="597.0">org.apache.dubbo.rpc.Invoker</node>
+    <node x="0.0" y="742.0">org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker</node>
+    <node x="797.0" y="357.0">org.apache.dubbo.rpc.cluster.router.MockInvoker</node>
+    <node x="132.0" y="905.0">org.apache.dubbo.rpc.cluster.support.FailsafeClusterInvoker</node>
+    <node x="771.0" y="800.0">org.apache.dubbo.registry.support.ConsumerInvokerWrapper</node>
+    <node x="331.0" y="828.0">org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker</node>
+    <node x="117.0" y="481.0">org.apache.dubbo.rpc.cluster.support.AvailableClusterInvoker</node>
+    <node x="235.0" y="665.0">org.apache.dubbo.rpc.cluster.router.file.FileRouterEngineTest.MockClusterInvoker</node>
+    <node x="583.0" y="846.0">org.apache.dubbo.rpc.support.MockInvoker</node>
+    <node x="433.0" y="155.0">org.apache.dubbo.rpc.cluster.support.FailoverClusterInvokerTest.MockInvoker</node>
+    <node x="350.0" y="588.0">org.apache.dubbo.rpc.cluster.support.MergeableClusterInvoker</node>
+    <node x="563.0" y="511.0">org.apache.dubbo.registry.support.ProviderInvokerWrapper</node>
+    <node x="506.0" y="751.0">org.apache.dubbo.rpc.proxy.AbstractProxyInvoker</node>
+    <node x="501.0" y="1071.0">org.apache.dubbo.rpc.cluster.support.FailfastClusterInvoker</node>
+    <node x="82.0" y="1021.0">org.apache.dubbo.rpc.cluster.support.ForkingClusterInvoker</node>
+    <node x="934.0" y="1005.0">org.apache.dubbo.registry.integration.RegistryProtocol.InvokerDelegete</node>
+    <node x="744.0" y="1162.0">org.apache.dubbo.registry.integration.RegistryDirectory.InvokerDelegate</node>
+    <node x="819.0" y="635.0">org.apache.dubbo.common.Node</node>
+    <node x="752.0" y="720.0">org.apache.dubbo.compatible.filter.MyInvoker</node>
+    <node x="924.0" y="723.0">org.apache.dubbo.rpc.support.MyInvoker</node>
+    <node x="713.0" y="923.0">org.apache.dubbo.rpc.protocol.InvokerWrapper</node>
+    <node x="265.0" y="1148.0">org.apache.dubbo.rpc.cluster.support.BroadcastClusterInvoker</node>
+    <node x="790.0" y="161.0">org.apache.dubbo.rpc.protocol.injvm.InjvmInvoker</node>
+    <node x="80.0" y="828.0">org.apache.dubbo.rpc.cluster.support.FailbackClusterInvoker</node>
+    <node x="565.0" y="51.0">org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker</node>
+    <node x="763.0" y="0.0">org.apache.dubbo.rpc.protocol.dubbo.ChannelWrappedInvoker</node>
+    <node x="359.0" y="337.0">org.apache.dubbo.config.invoker.DelegateProviderMetaDataInvoker</node>
+    <node x="328.0" y="994.0">org.apache.dubbo.rpc.cluster.StickyTest.StickyClusterInvoker</node>
+    <node x="468.0" y="674.0">org.apache.dubbo.rpc.listener.ListenerInvokerWrapper</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.dubbo.rpc.protocol.AbstractInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.support.MockInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.support.BlockMyInvoker" target="org.apache.dubbo.rpc.support.MyInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.FailoverClusterInvokerTest.MockInvoker" target="org.apache.dubbo.rpc.protocol.AbstractInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.wrapper.MockClusterInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.Invoker" target="org.apache.dubbo.common.Node">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.FailfastClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.AvailableClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.router.file.FileRouterEngineTest.MockClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.dubbo.RegistryProtocolTest.MockInvoker" target="org.apache.dubbo.rpc.protocol.AbstractInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.support.ProviderInvokerWrapper" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.dubbo.DubboInvoker" target="org.apache.dubbo.rpc.protocol.AbstractInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.StickyTest.StickyClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.proxy.AbstractProxyInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.compatible.filter.MyInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.BroadcastClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.alibaba.dubbo.rpc.Invoker.CompatibleInvoker" target="com.alibaba.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.FailsafeClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.support.MyInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.router.MockInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.config.invoker.DelegateProviderMetaDataInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.integration.RegistryProtocol.InvokerDelegete" target="org.apache.dubbo.rpc.protocol.InvokerWrapper">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.FailbackClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.InvokerWrapper" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.ForkingClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.FailoverClusterInvoker" target="org.apache.dubbo.rpc.cluster.support.AbstractClusterInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.injvm.InjvmInvoker" target="org.apache.dubbo.rpc.protocol.AbstractInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.listener.ListenerInvokerWrapper" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.dubbo.ChannelWrappedInvoker" target="org.apache.dubbo.rpc.protocol.AbstractInvoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.integration.RegistryDirectory.InvokerDelegate" target="org.apache.dubbo.rpc.protocol.InvokerWrapper">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="com.alibaba.dubbo.rpc.Invoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.support.DelegateInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.support.ConsumerInvokerWrapper" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.cluster.support.MergeableClusterInvoker" target="org.apache.dubbo.rpc.Invoker">
+      <point x="0.0" y="0.0" />
+      <point x="0.0" y="0.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="675.0" y="802.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

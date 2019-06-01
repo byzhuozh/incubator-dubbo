@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>org.apache.dubbo.rpc.Exporter</OriginalElement>
+  <nodes>
+    <node x="534.0" y="0.0">org.apache.dubbo.rpc.Exporter</node>
+    <node x="185.0" y="172.0">org.apache.dubbo.rpc.protocol.injvm.InjvmExporter</node>
+    <node x="85.5" y="86.0">org.apache.dubbo.rpc.protocol.AbstractExporter</node>
+    <node x="727.5" y="86.0">org.apache.dubbo.registry.integration.RegistryProtocol.DestroyableExporter</node>
+    <node x="946.5" y="86.0">org.apache.dubbo.registry.integration.RegistryProtocol.ExporterChangeableWrapper</node>
+    <node x="279.5" y="86.0">org.apache.dubbo.rpc.support.DelegateExporter</node>
+    <node x="0.0" y="172.0">org.apache.dubbo.rpc.protocol.dubbo.DubboExporter</node>
+    <node x="479.5" y="86.0">org.apache.dubbo.rpc.listener.ListenerExporterWrapper</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="org.apache.dubbo.rpc.protocol.dubbo.DubboExporter" target="org.apache.dubbo.rpc.protocol.AbstractExporter">
+      <point x="0.0" y="-18.0" />
+      <point x="82.5" y="147.0" />
+      <point x="129.0" y="147.0" />
+      <point x="-43.5" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.listener.ListenerExporterWrapper" target="org.apache.dubbo.rpc.Exporter">
+      <point x="0.0" y="-18.0" />
+      <point x="0.0" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.AbstractExporter" target="org.apache.dubbo.rpc.Exporter">
+      <point x="0.0" y="-18.0" />
+      <point x="172.5" y="56.0" />
+      <point x="545.9" y="56.0" />
+      <point x="-47.60000000000002" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.support.DelegateExporter" target="org.apache.dubbo.rpc.Exporter">
+      <point x="0.0" y="-18.0" />
+      <point x="369.5" y="66.0" />
+      <point x="569.7" y="66.0" />
+      <point x="-23.799999999999955" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.integration.RegistryProtocol.DestroyableExporter" target="org.apache.dubbo.rpc.Exporter">
+      <point x="0.0" y="-18.0" />
+      <point x="827.0" y="66.0" />
+      <point x="617.3" y="66.0" />
+      <point x="23.799999999999955" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.rpc.protocol.injvm.InjvmExporter" target="org.apache.dubbo.rpc.protocol.AbstractExporter">
+      <point x="0.0" y="-18.0" />
+      <point x="262.5" y="147.0" />
+      <point x="216.0" y="147.0" />
+      <point x="43.5" y="18.0" />
+    </edge>
+    <edge source="org.apache.dubbo.registry.integration.RegistryProtocol.ExporterChangeableWrapper" target="org.apache.dubbo.rpc.Exporter">
+      <point x="0.0" y="-18.0" />
+      <point x="1074.5" y="56.0" />
+      <point x="641.1" y="56.0" />
+      <point x="47.60000000000002" y="18.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="596.5" y="19.5" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Inner Classes</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
