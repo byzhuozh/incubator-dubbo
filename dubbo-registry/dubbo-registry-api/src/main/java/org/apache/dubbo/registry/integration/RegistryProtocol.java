@@ -56,6 +56,7 @@ import static org.apache.dubbo.common.Constants.VALIDATION_KEY;
 /**
  * RegistryProtocol
  *
+ * 实现 Protocol 接口，注册中心协议实现类
  */
 public class RegistryProtocol implements Protocol {
 

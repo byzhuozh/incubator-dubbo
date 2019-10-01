@@ -36,6 +36,9 @@ import org.apache.zookeeper.WatchedEvent;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * 实现 ZookeeperTransporter 抽象类，基于 Curator 的 Zookeeper 客户端实现类
+ */
 public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorWatcher> {
 
     private final CuratorFramework client;
@@ -43,15 +46,17 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorWatch
     public CuratorZookeeperClient(URL url) {
         super(url);
         try {
+            // 创建 client 对象
             CuratorFrameworkFactory.Builder builder = CuratorFrameworkFactory.builder()
-                    .connectString(url.getBackupAddress())
-                    .retryPolicy(new RetryNTimes(1, 1000))
-                    .connectionTimeoutMs(5000);
+                    .connectString(url.getBackupAddress())  // 连接地址
+                    .retryPolicy(new RetryNTimes(1, 1000))  // 重试策略，1 次，间隔 1000 ms
+                    .connectionTimeoutMs(5000); // 连接超时时间
             String authority = url.getAuthority();
             if (authority != null && authority.length() > 0) {
                 builder = builder.authorization("digest", authority.getBytes());
             }
             client = builder.build();
+            // 添加连接监听器
             client.getConnectionStateListenable().addListener(new ConnectionStateListener() {
                 @Override
                 public void stateChanged(CuratorFramework client, ConnectionState state) {
@@ -64,6 +69,7 @@ public class CuratorZookeeperClient extends AbstractZookeeperClient<CuratorWatch
                     }
                 }
             });
+            // 启动 client
             client.start();
         } catch (Exception e) {
             throw new IllegalStateException(e.getMessage(), e);
