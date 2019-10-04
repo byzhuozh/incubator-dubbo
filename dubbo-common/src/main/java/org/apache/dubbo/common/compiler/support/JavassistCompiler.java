@@ -37,22 +37,41 @@ import java.util.regex.Pattern;
  */
 public class JavassistCompiler extends AbstractCompiler {
 
+    /**
+     * 正则 - 匹配 import
+     */
     private static final Pattern IMPORT_PATTERN = Pattern.compile("import\\s+([\\w\\.\\*]+);\n");
 
+    /**
+     * 正则 - 匹配 extends
+     */
     private static final Pattern EXTENDS_PATTERN = Pattern.compile("\\s+extends\\s+([\\w\\.]+)[^\\{]*\\{\n");
 
+    /**
+     * 正则 - 匹配 implements
+     */
     private static final Pattern IMPLEMENTS_PATTERN = Pattern.compile("\\s+implements\\s+([\\w\\.]+)\\s*\\{\n");
 
+    /**
+     * 正则 - 匹配方法
+     */
     private static final Pattern METHODS_PATTERN = Pattern.compile("\n(private|public|protected)\\s+");
 
+    /**
+     * 正则 - 匹配变量
+     */
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
     @Override
     public Class<?> doCompile(String name, String source) throws Throwable {
+        // 获得类名
         int i = name.lastIndexOf('.');
         String className = i < 0 ? name : name.substring(i + 1);
+        // 创建 ClassPool 对象
         ClassPool pool = new ClassPool(true);
+        // 设置类搜索路径
         pool.appendClassPath(new LoaderClassPath(ClassHelper.getCallerClassLoader(getClass())));
+        // 匹配 import
         Matcher matcher = IMPORT_PATTERN.matcher(source);
         List<String> importPackages = new ArrayList<String>();
         Map<String, String> fullNames = new HashMap<String, String>();
@@ -105,7 +124,10 @@ public class JavassistCompiler extends AbstractCompiler {
                 cls.addInterface(pool.get(ifaceClass));
             }
         }
+
+        // 获得类中的内容，即首末 {} 的内容。
         String body = source.substring(source.indexOf("{") + 1, source.length() - 1);
+        // 匹配 method 。使用分隔的方式，实际上，分隔出来的不仅仅有方法。
         String[] methods = METHODS_PATTERN.split(body);
         for (String method : methods) {
             method = method.trim();
@@ -119,6 +141,10 @@ public class JavassistCompiler extends AbstractCompiler {
                 }
             }
         }
+
+        // 生成类
+        // JavassistCompiler.class.getProtectionDomain() =》 设置保护域和 JavassistCompiler 一致，即 `#getClass()` 方法。
+        // 深入见 《Java安全——安全管理器、访问控制器和类装载器》https://www.zybuluo.com/changedi/note/417132
         return cls.toClass(ClassHelper.getCallerClassLoader(getClass()), JavassistCompiler.class.getProtectionDomain());
     }
 
