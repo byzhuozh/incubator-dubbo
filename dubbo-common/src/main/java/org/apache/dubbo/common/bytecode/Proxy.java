@@ -35,15 +35,18 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Proxy.
+ *
+ * 代理抽象类，用于创建 Proxy 和 proxy 对象
  */
-
 public abstract class Proxy {
+
     public static final InvocationHandler RETURN_NULL_INVOKER = new InvocationHandler() {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {
             return null;
         }
     };
+
     public static final InvocationHandler THROW_UNSUPPORTED_INVOKER = new InvocationHandler() {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) {

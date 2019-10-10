@@ -27,6 +27,8 @@ import org.apache.dubbo.rpc.service.GenericService;
 
 /**
  * AbstractProxyFactory
+ *
+ * 实现 ProxyFactory 接口，代理工厂抽象类
  */
 public abstract class AbstractProxyFactory implements ProxyFactory {
 
@@ -51,6 +53,8 @@ public abstract class AbstractProxyFactory implements ProxyFactory {
                 }
             }
         }
+
+        // 增加 EchoService 接口，用于回生测试。参见文档《回声测试》http://dubbo.apache.org/zh-cn/docs/user/demos/echo-service.html
         if (interfaces == null) {
             interfaces = new Class<?>[]{invoker.getInterface(), EchoService.class};
         }
