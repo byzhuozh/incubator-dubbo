@@ -27,6 +27,8 @@ import java.lang.reflect.Proxy;
 
 /**
  * JavaassistRpcProxyFactory
+ *
+ * 实现 AbstractProxyInvoker 抽象类
  */
 public class JdkProxyFactory extends AbstractProxyFactory {
 
@@ -43,7 +45,9 @@ public class JdkProxyFactory extends AbstractProxyFactory {
             protected Object doInvoke(T proxy, String methodName,
                                       Class<?>[] parameterTypes,
                                       Object[] arguments) throws Throwable {
+                // 获得方法
                 Method method = proxy.getClass().getMethod(methodName, parameterTypes);
+                // 调用方法
                 return method.invoke(proxy, arguments);
             }
         };
