@@ -29,18 +29,23 @@ public class ConsumerConfig extends AbstractReferenceConfig {
     private Boolean isDefault;
 
     // networking framework client uses: netty, mina, etc.
+    // 网络通讯中间件类型
     private String client;
 
     // consumer thread pool type: cached, fixed, limit, eager
+    // 线程池类型
     private String threadpool;
 
     // consumer threadpool core thread size
+    // 消费者线程池核心线程数
     private Integer corethreads;
 
     // consumer threadpool thread size
+    // 消费者线程池线程数
     private Integer threads;
 
     // consumer threadpool queue size
+    // 消费者线程池队列长度
     private Integer queues;
 
     @Override

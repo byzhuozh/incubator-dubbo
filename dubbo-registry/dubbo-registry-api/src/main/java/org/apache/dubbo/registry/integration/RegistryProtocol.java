@@ -141,20 +141,22 @@ public class RegistryProtocol implements Protocol {
     }
 
     public void register(URL registryUrl, URL registedProviderUrl) {
+        // 查询注册器
         Registry registry = registryFactory.getRegistry(registryUrl);
+        // 服务注册 --> FailbackRegistry.register()
         registry.register(registedProviderUrl);
     }
 
     @Override
     public <T> Exporter<T> export(final Invoker<T> originInvoker) throws RpcException {
-        // 暴露服务
+        // 暴露本地服务
         // export invoker
         final ExporterChangeableWrapper<T> exporter = doLocalExport(originInvoker);
 
         // 获得注册中心 URL
         URL registryUrl = getRegistryUrl(originInvoker);
 
-        // 获得注册中心对象
+        // 获得注册中心对象, ZookeeperRegistry
         // registry provider
         final Registry registry = getRegistry(originInvoker);
 
@@ -169,13 +171,15 @@ public class RegistryProtocol implements Protocol {
 
         // 向注册中心注册服务提供者（自己）
         if (register) {
+            // 服务注册
             register(registryUrl, registedProviderUrl);
             ProviderConsumerRegTable.getProviderWrapper(originInvoker).setReg(true);
         }
 
         // 使用 OverrideListener 对象，订阅配置规则
         // Subscribe the override data
-        // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call the same service. Because the subscribed is cached key with the name of the service, it causes the subscription information to cover.
+        // FIXME When the provider subscribes, it will affect the scene : a certain JVM exposes the service and call the same service.
+        //  Because the subscribed is cached key with the name of the service, it causes the subscription information to cover.
         // 创建订阅配置规则的 URL
         final URL overrideSubscribeUrl = getSubscribedOverrideUrl(registedProviderUrl);
 

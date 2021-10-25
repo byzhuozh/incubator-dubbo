@@ -26,36 +26,18 @@ import org.apache.dubbo.common.utils.NetUtils;
 import org.apache.dubbo.common.utils.StringUtils;
 import org.apache.dubbo.registry.NotifyListener;
 import org.apache.dubbo.registry.Registry;
-import org.apache.dubbo.rpc.Invocation;
-import org.apache.dubbo.rpc.Invoker;
-import org.apache.dubbo.rpc.Protocol;
-import org.apache.dubbo.rpc.RpcException;
-import org.apache.dubbo.rpc.RpcInvocation;
-import org.apache.dubbo.rpc.cluster.Cluster;
-import org.apache.dubbo.rpc.cluster.Configurator;
-import org.apache.dubbo.rpc.cluster.ConfiguratorFactory;
-import org.apache.dubbo.rpc.cluster.Router;
-import org.apache.dubbo.rpc.cluster.RouterFactory;
+import org.apache.dubbo.rpc.*;
+import org.apache.dubbo.rpc.cluster.*;
 import org.apache.dubbo.rpc.cluster.directory.AbstractDirectory;
 import org.apache.dubbo.rpc.cluster.directory.StaticDirectory;
 import org.apache.dubbo.rpc.cluster.support.ClusterUtils;
 import org.apache.dubbo.rpc.protocol.InvokerWrapper;
 import org.apache.dubbo.rpc.support.RpcUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * RegistryDirectory
- *
  */
 public class RegistryDirectory<T> extends AbstractDirectory<T> implements NotifyListener {
 
@@ -219,7 +201,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 this.overrideDirectoryUrl = configurator.configure(overrideDirectoryUrl);
             }
         }
-        // providers
+
+        // providers 服务发生改变重新订阅后刷新创建的代理的invoker
         refreshInvoker(invokerUrls);
     }
 
@@ -237,6 +220,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
                 && Constants.EMPTY_PROTOCOL.equals(invokerUrls.get(0).getProtocol())) {
             this.forbidden = true; // Forbid to access
             this.methodInvokerMap = null; // Set the method invoker map to null
+            // 销毁所有的invoker
             destroyAllInvokers(); // Close all invokers
         } else {
             this.forbidden = false; // Allow to access
@@ -250,7 +234,11 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             if (invokerUrls.isEmpty()) {
                 return;
             }
+
+            // 根据invoker url创建代理invoker对象
             Map<String, Invoker<T>> newUrlInvokerMap = toInvokers(invokerUrls);// Translate url list to Invoker map
+
+            // 转换调用方法的invoker
             Map<String, List<Invoker<T>>> newMethodInvokerMap = toMethodInvokers(newUrlInvokerMap); // Change method name to map Invoker Map
             // state change
             // If the calculation is wrong, it is not processed.
@@ -261,6 +249,7 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
             this.methodInvokerMap = multiGroup ? toMergeMethodInvokerMap(newMethodInvokerMap) : newMethodInvokerMap;
             this.urlInvokerMap = newUrlInvokerMap;
             try {
+                // 销毁没用的执行器
                 destroyUnusedInvokers(oldUrlInvokerMap, newUrlInvokerMap); // Close the unused Invoker
             } catch (Exception e) {
                 logger.warn("destroyUnusedInvokers error. ", e);
@@ -573,8 +562,8 @@ public class RegistryDirectory<T> extends AbstractDirectory<T> implements Notify
         if (forbidden) {
             // 1. No service provider 2. Service providers are disabled
             throw new RpcException(RpcException.FORBIDDEN_EXCEPTION,
-                "No provider available from registry " + getUrl().getAddress() + " for service " + getConsumerUrl().getServiceKey() + " on consumer " +  NetUtils.getLocalHost()
-                        + " use dubbo version " + Version.getVersion() + ", please check status of providers(disabled, not registered or in blacklist).");
+                    "No provider available from registry " + getUrl().getAddress() + " for service " + getConsumerUrl().getServiceKey() + " on consumer " + NetUtils.getLocalHost()
+                            + " use dubbo version " + Version.getVersion() + ", please check status of providers(disabled, not registered or in blacklist).");
         }
         List<Invoker<T>> invokers = null;
         Map<String, List<Invoker<T>>> localMethodInvokerMap = this.methodInvokerMap; // local reference

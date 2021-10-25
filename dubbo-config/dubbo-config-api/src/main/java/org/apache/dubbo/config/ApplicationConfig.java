@@ -69,6 +69,7 @@ public class ApplicationConfig extends AbstractConfig {
     private Boolean isDefault;
 
     // directory for saving thread dump
+    // 线程堆栈保存文件夹
     private String dumpDirectory;
 
     private Boolean qosEnable;

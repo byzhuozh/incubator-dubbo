@@ -38,7 +38,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * ZookeeperRegistry
- *
+ * <p>
  * 实现 FailbackRegistry 抽象类，Zookeeper Registry
  */
 public class ZookeeperRegistry extends FailbackRegistry {
@@ -83,6 +83,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
             public void stateChanged(int state) {
                 if (state == RECONNECTED) {
                     try {
+                        // 恢复注册信息
                         recover();
                     } catch (Exception e) {
                         logger.error(e.getMessage(), e);
@@ -122,6 +123,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
     @Override
     protected void doRegister(URL url) {
         try {
+            // 服务注册，创建zk节点，如果 dynamic 配置的是true，创建的就是 zk 临时节点
+            // 临时节点，这也就是zk注册的服务所在节点挂了之后其他客户端节点本地的服务列表会更新的原因，不会调用到不存在的服务，
+            // 当然也存在zk临时节点删除，通知其他订阅这个节点的客户端时候出现网络抖动，zk会做处理确保一定能通知到
             zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));
         } catch (Throwable e) {
             throw new RpcException("Failed to register " + url + " to zookeeper " + getUrl() + ", cause: " + e.getMessage(), e);
@@ -130,6 +134,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 取消zk 节点，即删除节点信息
+     *
      * @param url
      */
     @Override
@@ -143,12 +148,14 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 订阅
+     *
      * @param url
      * @param listener
      */
     @Override
     protected void doSubscribe(final URL url, final NotifyListener listener) {
         try {
+            // 如果订阅的接口interface属性值是*
             // 处理所有 Service 层的发起订阅，例如监控中心的订阅
             if (Constants.ANY_VALUE.equals(url.getServiceInterface())) {
                 String root = toRootPath();
@@ -158,6 +165,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                     zkListeners.putIfAbsent(url, new ConcurrentHashMap<NotifyListener, ChildListener>());
                     listeners = zkListeners.get(url);
                 }
+
                 // 获得 ChildListener 对象
                 ChildListener zkListener = listeners.get(listener);
                 if (zkListener == null) {   // 不存在 ChildListener 对象，进行创建 ChildListener 对象
@@ -169,6 +177,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                                 // 新增 Service 接口全名时（即新增服务），发起该 Service 层的订阅
                                 if (!anyServices.contains(child)) {
                                     anyServices.add(child);
+                                    // 订阅服务
                                     subscribe(url.setPath(child).addParameters(Constants.INTERFACE_KEY, child,
                                             Constants.CHECK_KEY, String.valueOf(false)), listener);
                                 }
@@ -177,8 +186,10 @@ public class ZookeeperRegistry extends FailbackRegistry {
                     });
                     zkListener = listeners.get(listener);
                 }
+
                 // 创建 Service 节点。该节点为持久节点。
                 zkClient.create(root, false);
+
                 // 向 Zookeeper ，Service 节点，发起订阅
                 List<String> services = zkClient.addChildListener(root, zkListener);
                 // 首次全量数据获取完成时，循环 Service 接口全名数组，发起该 Service 层的订阅
@@ -280,7 +291,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得根目录
-     *
+     * <p>
      * Root
      *
      * @return 路径
@@ -303,7 +314,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得服务路径
-     *
+     * <p>
      * Root + Type
      *
      * @param url URL
@@ -319,7 +330,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得分类路径数组
-     *
+     * <p>
      * Root + Service + Type
      *
      * @param url URL
@@ -344,7 +355,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得分类路径
-     *
+     * <p>
      * Root + Service + Type
      *
      * @param url URL
@@ -356,9 +367,9 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得 URL 的路径
-     *
+     * <p>
      * Root + Service + Type + URL
-     *
+     * <p>
      * 被 {@link #doRegister(URL)} 和 {@link #doUnregister(URL)} 调用
      *
      * @param url URL
@@ -371,7 +382,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
     /**
      * 获得 providers 中，和 consumer 匹配的 URL 数组
      *
-     * @param consumer 用于匹配 URL
+     * @param consumer  用于匹配 URL
      * @param providers 被匹配的 URL 的字符串
      * @return 匹配的 URL 数组
      */
@@ -393,11 +404,11 @@ public class ZookeeperRegistry extends FailbackRegistry {
 
     /**
      * 获得 providers 中，和 consumer 匹配的 URL 数组
-     *
+     * <p>
      * 若不存在匹配，则创建 `empty://` 的 URL返回。通过这样的方式，可以处理类似服务提供者为空的情况。
      *
-     * @param consumer 用于匹配 URL
-     * @param path 被匹配的 URL 的字符串
+     * @param consumer  用于匹配 URL
+     * @param path      被匹配的 URL 的字符串
      * @param providers 匹配的 URL 数组
      * @return 匹配的 URL 数组
      */

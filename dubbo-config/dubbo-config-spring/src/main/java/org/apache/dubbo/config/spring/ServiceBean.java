@@ -114,12 +114,19 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         return service;
     }
 
+    /**
+     * Spring
+     *  AbstractApplicationContext#refresh()
+     *      --> finishRefresh();
+     *          --> publishEvent((ApplicationEvent)(new ContextRefreshedEvent(this)));  发布容器上下文刷新事件，此时spring 容器已经全部初始化完成
+     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (isDelay() && !isExported() && !isUnexported()) {
             if (logger.isInfoEnabled()) {
                 logger.info("The service ready on spring started. service: " + getInterface());
             }
+            // 接收到上下文刷新事件注册服务
             export();
         }
     }

@@ -40,6 +40,7 @@ public class ProtocolConfig extends AbstractConfig {
     private static final long serialVersionUID = 6913423882496634749L;
 
     // protocol name
+    // 通讯协议，默认dubbo，可选 hession、http、rmi、thrift、webservice等
     private String name;
 
     // service IP address (when there are multiple network cards available)
@@ -52,39 +53,53 @@ public class ProtocolConfig extends AbstractConfig {
     private String contextpath;
 
     // thread pool
+    // 线程池类型
+    // fixed java自带线程池
+    // cached java自带线程池
+    // limited 线程数只增大不会减少
+    // eager java的线程池增加线程策略是核心线程数占满了往队列中放，队列也放满了没超过线程池的最大线程数才会创建线程，这个线程池增加线程的策略是currentPoolSize<submittedTaskCount<maxPoolSize
+    // 满足这个条件时会增加线程，submittedTaskCount是dubbo扩展的一个计数器，在执行线程的时候增加计数，线程执行完减少计数。
     private String threadpool;
 
     // thread pool core thread size
     private Integer corethreads;
 
     // thread pool size (fixed size)
+    // 线程池的最大线程数
     private Integer threads;
 
     // IO thread pool size (fixed size)
+    // io线程池线程数，主要指netty的work线程池线程数，默认Math.min(Runtime.getRuntime().availableProcessors() + 1, 32)
     private Integer iothreads;
 
     // thread pool's queue length
+    // 队列长度,默认0
     private Integer queues;
 
     // max acceptable connections
+    // 服务提供者最大可接收的线程数，0标识不限制，可以用次参数来做服务降级
     private Integer accepts;
 
     // protocol codec
+    // 编码格式，默认dubbo
     private String codec;
 
     // serialization
+    // 序列化方式，默认是hession2，可选fastjson、jdk、kryo
     private String serialization;
 
     // charset
     private String charset;
 
     // payload max length
+    // 请求和响应的最大字节 默认8m
     private Integer payload;
 
     // buffer size
     private Integer buffer;
 
     // heartbeat interval
+    // 心跳监测频次 60s
     private Integer heartbeat;
 
     // access log
@@ -94,6 +109,9 @@ public class ProtocolConfig extends AbstractConfig {
     private String transporter;
 
     // how information is exchanged
+    // 信息交换方式 header，默认HeaderExchanger
+    // <dubbo:protocol exchanger=""/>
+    // <dubbo:provider exchanger=""/>
     private String exchanger;
 
     // thread dispatch mode

@@ -104,11 +104,14 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
 
     protected void checkRegistry() {
         // for backward compatibility
+        // 如果注册中心没有配置获取获取系统属性dubbo.registry.address属性值
         if (registries == null || registries.isEmpty()) {
             String address = ConfigUtils.getProperty("dubbo.registry.address");
             if (address != null && address.length() > 0) {
                 registries = new ArrayList<RegistryConfig>();
+                // 多个注册地址用|分开
                 String[] as = address.split("\\s*[|]+\\s*");
+                // 初始化注册中心配置
                 for (String a : as) {
                     RegistryConfig registryConfig = new RegistryConfig();
                     registryConfig.setAddress(a);
@@ -126,6 +129,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     + ", Please add <dubbo:registry address=\"...\" /> to your spring config. If you want unregister, please set <dubbo:service registry=\"N/A\" />");
         }
         for (RegistryConfig registryConfig : registries) {
+            // 设置注册中心的系统属性值
             appendProperties(registryConfig);
         }
     }
@@ -133,22 +137,28 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
     @SuppressWarnings("deprecation")
     protected void checkApplication() {
         // for backward compatibility
+        // 如果没有应用配置，从 dubbo.application.name 系统属性值
         if (application == null) {
             String applicationName = ConfigUtils.getProperty("dubbo.application.name");
             if (applicationName != null && applicationName.length() > 0) {
+                // 创建默认应用配置
                 application = new ApplicationConfig();
             }
         }
+
         if (application == null) {
             throw new IllegalStateException(
                     "No such application config! Please add <dubbo:application name=\"...\" /> to your spring config.");
         }
+
         appendProperties(application);
 
+        // 从系统变量读取 dubbo.service.shutdown.wait 属性值，服务关闭等待时间
         String wait = ConfigUtils.getProperty(Constants.SHUTDOWN_WAIT_KEY);
         if (wait != null && wait.trim().length() > 0) {
             System.setProperty(Constants.SHUTDOWN_WAIT_KEY, wait.trim());
         } else {
+            // 服务关闭等到时间获取系统属性 dubbo.service.shutdown.wait.seconds 服务关闭时等待多少s
             wait = ConfigUtils.getProperty(Constants.SHUTDOWN_WAIT_SECONDS_KEY);
             if (wait != null && wait.trim().length() > 0) {
                 System.setProperty(Constants.SHUTDOWN_WAIT_SECONDS_KEY, wait.trim());
@@ -170,10 +180,12 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         if (registries != null && !registries.isEmpty()) {
             for (RegistryConfig config : registries) {
                 // 获得注册中心的地址
+                // 如果注册地址为空，赋值为0.0.0.0
                 String address = config.getAddress();
                 if (address == null || address.length() == 0) {
                     address = Constants.ANYHOST_VALUE;
                 }
+                // 从系统属性中获取dubbo.registry.address属性值
                 String sysaddress = System.getProperty("dubbo.registry.address");   // 从启动参数读取
                 if (sysaddress != null && sysaddress.length() > 0) {
                     address = sysaddress;
@@ -181,8 +193,9 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 // 有效的地址
                 if (address.length() > 0 && !RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
                     Map<String, String> map = new HashMap<String, String>();
-                    // 将各种配置对象，添加到 `map` 集合中。
+                    // application配置追加到 map
                     appendParameters(map, application);
+                    // 注册中心配置添加到map
                     appendParameters(map, config);
                     // 添加 `path` `dubbo` `timestamp` `pid` 到 `map` 集合中。
                     map.put("path", RegistryService.class.getName());
@@ -203,10 +216,11 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                     List<URL> urls = UrlUtils.parseURLs(address, map);
                     // 循环 `url` ，设置 "registry" 和 "protocol" 属性。
                     for (URL url : urls) {
+                        // url追加注册协议
                         // 设置 `registry=${protocol}` 和 `protocol=registry` 到 URL
                         url = url.addParameter(Constants.REGISTRY_KEY, url.getProtocol());
                         url = url.setProtocol(Constants.REGISTRY_PROTOCOL);
-                        // 添加到结果
+                        // 可以注册不订阅
                         if ((provider && url.getParameter(Constants.REGISTER_KEY, true))    // 服务提供者 && 注册
                                 || (!provider && url.getParameter(Constants.SUBSCRIBE_KEY, true))) {    // 服务消费者 && 订阅
                             registryList.add(url);
@@ -284,11 +298,15 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         if (interfaceClass == null) {
             throw new IllegalStateException("interface not allow null!");
         }
+
         // to verify interfaceClass is an interface
+        // 验证接口是否是一个接口
         if (!interfaceClass.isInterface()) {
             throw new IllegalStateException("The interface class " + interfaceClass + " is not a interface!");
         }
+
         // check if methods exist in the interface
+        // 检查方法是否是接口的方法
         if (methods != null && !methods.isEmpty()) {
             for (MethodConfig methodBean : methods) {
                 String methodName = methodBean.getName();

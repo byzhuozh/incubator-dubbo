@@ -38,11 +38,13 @@ import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 public class DubboNamespaceHandler extends NamespaceHandlerSupport {
 
     static {
+        // 检查包冲突
         Version.checkDuplicate(DubboNamespaceHandler.class);
     }
 
     @Override
     public void init() {
+        // xml配置解析
         registerBeanDefinitionParser("application", new DubboBeanDefinitionParser(ApplicationConfig.class, true));
         registerBeanDefinitionParser("module", new DubboBeanDefinitionParser(ModuleConfig.class, true));
         registerBeanDefinitionParser("registry", new DubboBeanDefinitionParser(RegistryConfig.class, true));
@@ -52,6 +54,8 @@ public class DubboNamespaceHandler extends NamespaceHandlerSupport {
         registerBeanDefinitionParser("protocol", new DubboBeanDefinitionParser(ProtocolConfig.class, true));
         registerBeanDefinitionParser("service", new DubboBeanDefinitionParser(ServiceBean.class, true));
         registerBeanDefinitionParser("reference", new DubboBeanDefinitionParser(ReferenceBean.class, false));
+
+        // annotation解析 <dubbo:annotation package="" /> xml配置
         registerBeanDefinitionParser("annotation", new AnnotationBeanDefinitionParser());
     }
 

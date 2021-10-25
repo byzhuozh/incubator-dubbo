@@ -56,7 +56,7 @@ public class ProtocolFilterWrapper implements Protocol {
      */
     private static <T> Invoker<T> buildInvokerChain(final Invoker<T> invoker, String key, String group) {
         Invoker<T> last = invoker;
-        // 获得过滤器数组
+        // 过滤器链是list实现，用spi加载filter chain
         List<Filter> filters = ExtensionLoader.getExtensionLoader(Filter.class).getActivateExtension(invoker.getUrl(), key, group);
         // 倒序循环 Filter ，创建带 Filter 链的 Invoker 对象
         if (!filters.isEmpty()) {
@@ -110,10 +110,13 @@ public class ProtocolFilterWrapper implements Protocol {
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         // 注册中心
         if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
+            // ProtocolListenerWrapper.export()
             return protocol.export(invoker);
         }
+
         // 建立带有 Filter 过滤链的 Invoker ，再暴露服务。
-        return protocol.export(buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER));
+        return protocol.export(
+                buildInvokerChain(invoker, Constants.SERVICE_FILTER_KEY, Constants.PROVIDER));
     }
 
     @Override

@@ -55,6 +55,7 @@ public class ProtocolListenerWrapper implements Protocol {
     public <T> Exporter<T> export(Invoker<T> invoker) throws RpcException {
         // 注册中心
         if (Constants.REGISTRY_PROTOCOL.equals(invoker.getUrl().getProtocol())) {
+            // RegistryProtocol.export()
             return protocol.export(invoker);
         }
 
