@@ -73,7 +73,7 @@ public class RegistryProtocol implements Protocol {
      * key：服务 Dubbo URL
      */
     // To solve the problem of RMI repeated exposure port conflicts, the services that have been exposed are no longer exposed.
-    // 用于解决rmi重复暴露端口冲突的问题，已经暴露过的服务不再重新暴露
+    // 用于解决 rmi 重复暴露端口冲突的问题，已经暴露过的服务不再重新暴露
     // providerurl <--> exporter
     private final Map<String, ExporterChangeableWrapper<?>> bounds = new ConcurrentHashMap<String, ExporterChangeableWrapper<?>>();
     private Cluster cluster;
@@ -343,6 +343,7 @@ public class RegistryProtocol implements Protocol {
     }
 
     private <T> Invoker<T> doRefer(Cluster cluster, Registry registry, Class<T> type, URL url) {
+        // 创建 RegistryDirectory 对象，并设置注册中心
         RegistryDirectory<T> directory = new RegistryDirectory<T>(type, url);
         directory.setRegistry(registry);
         directory.setProtocol(protocol);
@@ -359,7 +360,9 @@ public class RegistryProtocol implements Protocol {
                         + "," + Constants.CONFIGURATORS_CATEGORY
                         + "," + Constants.ROUTERS_CATEGORY));
 
+        // 创建 Invoker 对象
         Invoker invoker = cluster.join(directory);
+        // 向本地注册表，注册消费者
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
         return invoker;
     }
