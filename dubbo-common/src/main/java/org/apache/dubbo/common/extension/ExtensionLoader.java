@@ -187,6 +187,8 @@ public class ExtensionLoader<T> {
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
+        // 如果扩展类型是ExtensionFactory,那么则设置为null
+        // 这里通过getAdaptiveExtension方法获取一个运行时自适应的扩展类型(每个Extension只能有一个@Adaptive类型的实现，如果没有dubbo会动态生成一个类)
         objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
 
@@ -217,10 +219,9 @@ public class ExtensionLoader<T> {
                     ") is not extension, because WITHOUT @" + SPI.class.getSimpleName() + " Annotation!");
         }
 
-        // 获得接口对应的拓展点加载器
+        // 将接口类型与其对应的ExtensionLoader本地缓存到 `ConcurrentMap<Class<?>, ExtensionLoader<?>> EXTENSION_LOADERS`中
         ExtensionLoader<T> loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         if (loader == null) {
-            // 给每个类型创建拓展其
             EXTENSION_LOADERS.putIfAbsent(type, new ExtensionLoader<T>(type));
             loader = (ExtensionLoader<T>) EXTENSION_LOADERS.get(type);
         }
@@ -574,7 +575,7 @@ public class ExtensionLoader<T> {
         // 从缓存中，获得自适应拓展对象
         Object instance = cachedAdaptiveInstance.get();
         if (instance == null) {
-            // 若之前未创建报错
+            // double-check方式保证线程安全（单实例的一种实现方式）
             if (createAdaptiveInstanceError == null) {
                 synchronized (cachedAdaptiveInstance) {
                     instance = cachedAdaptiveInstance.get();
@@ -582,7 +583,7 @@ public class ExtensionLoader<T> {
                         try {
                             // 创建自适应拓展对象
                             instance = createAdaptiveExtension();
-                            // 设置到缓存
+                            // 将实例本地缓存
                             cachedAdaptiveInstance.set(instance);
                         } catch (Throwable t) {
                             // 记录异常
@@ -684,6 +685,7 @@ public class ExtensionLoader<T> {
                             && Modifier.isPublic(method.getModifiers())) {
                         // 获取 setter 方法参数类型
                         Class<?> pt = method.getParameterTypes()[0];
+
                         try {
                             // 获得属性
                             String property = method.getName().length() > 3 ? method.getName().substring(3, 4).toLowerCase() + method.getName().substring(4) : "";
@@ -750,7 +752,7 @@ public class ExtensionLoader<T> {
      * @return 拓展实现类数组
      */
     private Map<String, Class<?>> loadExtensionClasses() {
-        // 获取 SPI 注解，这里的 type 是在调用 getExtensionLoader 方法时传入的
+        // 如果入参类型申明了SPI注解，那么SPI注解中的value就是默认实现名称，即cachedDefaultName （SPI注解中value的值只能有1个，超过1个会抛出异常）；
         final SPI defaultAnnotation = type.getAnnotation(SPI.class);
         if (defaultAnnotation != null) {
             String value = defaultAnnotation.value();
@@ -767,7 +769,7 @@ public class ExtensionLoader<T> {
             }
         }
 
-        // 从配置文件中，加载拓展实现类数组
+        // 遍历类路径下的（DUBBO_INTERNAL_DIRECTORY，DUBBO_DIRECTORY，SERVICES_DIRECTORY）三个目录，将符合type类型的所有实现存到Map中；
         Map<String, Class<?>> extensionClasses = new HashMap<String, Class<?>>();
         loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName());
         loadDirectory(extensionClasses, DUBBO_INTERNAL_DIRECTORY, type.getName().replace("org.apache", "com.alibaba"));
@@ -958,10 +960,12 @@ public class ExtensionLoader<T> {
      * @return 自适应拓展类
      */
     private Class<?> getAdaptiveExtensionClass() {
+        // 加载当前Extension的所有实现,如果有@Adaptive类型，则会赋值为cachedAdaptiveClass属性缓存起来
         getExtensionClasses();
         if (cachedAdaptiveClass != null) {
             return cachedAdaptiveClass;
         }
+        // 没有找到@Adaptive类型实现，则动态创建一个AdaptiveExtensionClass
         return cachedAdaptiveClass = createAdaptiveExtensionClass();
     }
 

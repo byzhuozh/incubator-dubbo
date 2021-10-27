@@ -224,14 +224,15 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         } else {
             // 普通接口的实现
             try {
-                interfaceClass = Class.forName(interfaceName, true, Thread.currentThread()
-                        .getContextClassLoader());
+                interfaceClass = Class.forName(interfaceName, true, Thread.currentThread().getContextClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
+
             // 校验接口和方法
             checkInterfaceAndMethods(interfaceClass, methods);
         }
+
         // 直连提供者，参见文档《直连提供者》http://dubbo.apache.org/zh-cn/docs/user/demos/explicit-target.html
         // 【直连提供者】第一优先级，通过 -D 参数指定 ，例如 java -Dcom.alibaba.xxx.XxxService=dubbo://localhost:20890
         String resolve = System.getProperty(interfaceName);
@@ -317,8 +318,10 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
         // 校验 ApplicationConfig 配置。
         checkApplication();
+
         // 校验 Stub 和 Mock 相关的配置
         checkStubAndMock(interfaceClass);
+
         // 将 `side`，`dubbo`，`timestamp`，`pid` 参数，添加到 `map` 集合中。
         Map<String, String> map = new HashMap<String, String>();
         resolveAsyncInterface(interfaceClass, map);
@@ -343,12 +346,14 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
                 map.put("methods", StringUtils.join(new HashSet<String>(Arrays.asList(methods)), ","));
             }
         }
+
         map.put(Constants.INTERFACE_KEY, interfaceName);
         // 将各种配置对象，添加到 `map` 集合中
         appendParameters(map, application);
         appendParameters(map, module);
         appendParameters(map, consumer, Constants.DEFAULT_KEY);
         appendParameters(map, this);
+
         // 获得服务键，作为前缀
         String prefix = StringUtils.getServiceKey(map);
         // 将 MethodConfig 对象数组，添加到 `map` 集合中。
