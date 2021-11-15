@@ -81,10 +81,13 @@ public class DubboBootstrap {
     }
 
     public void stop() {
+        // serviceConfigList 目前任何情况下都是空的，因为DubboBootstrap#registerServiceConfig全局没有被调用
         for (ServiceConfig serviceConfig: serviceConfigList) {
             serviceConfig.unexport();
         }
+
         shutdownHook.destroyAll();
+
         if (registerShutdownHookOnStart) {
             removeShutdownHook();
         }

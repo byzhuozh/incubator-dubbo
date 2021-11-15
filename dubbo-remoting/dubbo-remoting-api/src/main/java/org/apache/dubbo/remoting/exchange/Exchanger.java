@@ -35,6 +35,8 @@ public interface Exchanger {
     /**
      * bind.
      *
+     * 开启一个服务端Server
+     *
      * @param url
      * @param handler
      * @return message server
@@ -44,6 +46,8 @@ public interface Exchanger {
 
     /**
      * connect.
+     *
+     * 获取Client
      *
      * @param url
      * @param handler

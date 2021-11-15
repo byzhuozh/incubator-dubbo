@@ -31,6 +31,8 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
     /**
      * Invoker 对象
+     *
+     * MockClusterInvoker
      */
     private final Invoker<?> invoker;
 
@@ -75,7 +77,7 @@ public class InvokerInvocationHandler implements InvocationHandler {
             }
         }
 
-        // RPC 调用
+        // RPC 调用  invoker --> MockClusterInvoker
         return invoker.invoke(invocation).recreate();
     }
 

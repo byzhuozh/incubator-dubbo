@@ -105,23 +105,33 @@ public class HeaderExchangeServer implements ExchangeServer {
 
     @Override
     public void close(final int timeout) {
+        // 打个标识，表明server正在关闭
         startClose();
+
         if (timeout > 0) {
             final long max = (long) timeout;
             final long start = System.currentTimeMillis();
             if (getUrl().getParameter(Constants.CHANNEL_SEND_READONLYEVENT_KEY, true)) {
+                // 如果注册中心有延迟，会立即收到readonly事件，下次不会再调用这台机器，当前已经调用的会处理完
                 sendChannelReadOnlyEvent();
             }
+
+            //如果还有进行中的任务并且没有到达等待时间的上限，则继续等待
             while (HeaderExchangeServer.this.isRunning()
                     && System.currentTimeMillis() - start < max) {
                 try {
+                    // 休息10毫秒再检查
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
                     logger.warn(e.getMessage(), e);
                 }
             }
         }
+
+        // 关闭心跳，停止应答
         doClose();
+
+        // 关闭通道和Dubbo的分发线程池
         server.close(timeout);
     }
 
@@ -148,11 +158,16 @@ public class HeaderExchangeServer implements ExchangeServer {
     }
 
     private void doClose() {
+        // 修改标记位，该标记为设置为true后，provider不再对上游请求做应答
         if (!closed.compareAndSet(false, true)) {
             return;
         }
+
+        // 取消心跳的Futrue
         stopHeartbeatTimer();
         try {
+
+            // 关闭心跳的线程池
             scheduled.shutdown();
         } catch (Throwable t) {
             logger.warn(t.getMessage(), t);

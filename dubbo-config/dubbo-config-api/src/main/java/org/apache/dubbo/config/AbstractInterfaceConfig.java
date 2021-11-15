@@ -178,18 +178,21 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
         // 创建 注册中心 URL 数组
         List<URL> registryList = new ArrayList<URL>();
         if (registries != null && !registries.isEmpty()) {
+            // 遍历 RegistryConfig
             for (RegistryConfig config : registries) {
                 // 获得注册中心的地址
-                // 如果注册地址为空，赋值为0.0.0.0
+                // 如果注册地址为空，赋值为 0.0.0.0
                 String address = config.getAddress();
                 if (address == null || address.length() == 0) {
                     address = Constants.ANYHOST_VALUE;
                 }
+
                 // 从系统属性中获取dubbo.registry.address属性值
                 String sysaddress = System.getProperty("dubbo.registry.address");   // 从启动参数读取
                 if (sysaddress != null && sysaddress.length() > 0) {
                     address = sysaddress;
                 }
+
                 // 有效的地址
                 if (address.length() > 0 && !RegistryConfig.NO_AVAILABLE.equalsIgnoreCase(address)) {
                     Map<String, String> map = new HashMap<String, String>();
@@ -212,6 +215,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                             map.put("protocol", "dubbo");
                         }
                     }
+
                     // 解析地址，创建 Dubbo URL 数组。（数组大小可以为一）
                     List<URL> urls = UrlUtils.parseURLs(address, map);
                     // 循环 `url` ，设置 "registry" 和 "protocol" 属性。
@@ -219,6 +223,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                         // url追加注册协议
                         // 设置 `registry=${protocol}` 和 `protocol=registry` 到 URL
                         url = url.addParameter(Constants.REGISTRY_KEY, url.getProtocol());
+                        // 将 URL 协议头设置为 registry
                         url = url.setProtocol(Constants.REGISTRY_PROTOCOL);
                         // 可以注册不订阅
                         if ((provider && url.getParameter(Constants.REGISTER_KEY, true))    // 服务提供者 && 注册

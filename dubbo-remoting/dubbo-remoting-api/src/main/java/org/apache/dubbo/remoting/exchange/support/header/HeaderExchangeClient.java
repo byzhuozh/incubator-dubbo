@@ -127,7 +127,10 @@ public class HeaderExchangeClient implements ExchangeClient {
 
     @Override
     public void close() {
+        // 关闭心跳
         doClose();
+
+        // 关闭通讯资源，关闭后不能重新建立连接，也不能向下游发送请求
         channel.close();
     }
 

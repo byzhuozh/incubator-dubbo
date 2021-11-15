@@ -34,6 +34,9 @@ public interface Exporter<T> {
 
     /**
      * unexport.
+     *
+     * 取消接口暴露
+     *
      * <p>
      * <code>
      * getInvoker().destroy();

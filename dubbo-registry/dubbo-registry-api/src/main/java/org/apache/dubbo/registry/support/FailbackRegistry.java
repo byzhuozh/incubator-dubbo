@@ -149,6 +149,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         failedUnregistered.remove(url);
         try {
             // Sending a registration request to the server side
+            // 模板方法，由子类实现
             // 向服务器端发送注册请求 --> ZookeeperRegistry
             doRegister(url);
         } catch (Exception e) {
@@ -209,10 +210,13 @@ public abstract class FailbackRegistry extends AbstractRegistry {
         super.subscribe(url, listener);
         // 删除订阅失败的url
         removeFailedSubscribed(url, listener);
+
         try {
+
             // Sending a subscription request to the server side
             // 向服务器端发送订阅请求 --> ZookeeperRegistry
             doSubscribe(url, listener);
+
         } catch (Exception e) {
             Throwable t = e;
 
@@ -302,7 +306,6 @@ public abstract class FailbackRegistry extends AbstractRegistry {
 
     @Override
     protected void recover() throws Exception {
-        // register
         // 查询注册的url
         Set<URL> recoverRegistered = new HashSet<URL>(getRegistered());
         if (!recoverRegistered.isEmpty()) {
@@ -314,7 +317,7 @@ public abstract class FailbackRegistry extends AbstractRegistry {
                 failedRegistered.add(url);
             }
         }
-        // subscribe
+
         // 查询订阅信息
         Map<URL, Set<NotifyListener>> recoverSubscribed = new HashMap<URL, Set<NotifyListener>>(getSubscribed());
         if (!recoverSubscribed.isEmpty()) {
