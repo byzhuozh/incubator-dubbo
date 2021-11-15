@@ -334,9 +334,10 @@ public class RegistryProtocol implements Protocol {
     @SuppressWarnings("unchecked")
     public <T> Invoker<T> refer(Class<T> type, URL url) throws RpcException {
         // 取 registry 参数值，并将其设置为协议头
+        // 处理注册中心的协议，用url中registry参数的值作为真实的注册中心协议
         url = url.setProtocol(url.getParameter(Constants.REGISTRY_KEY, Constants.DEFAULT_REGISTRY)).removeParameter(Constants.REGISTRY_KEY);
 
-        // 获取注册中心实例
+        // 获取注册中心实例：zookeeperRegistry
         Registry registry = registryFactory.getRegistry(url);
         if (RegistryService.class.equals(type)) {
             return proxyFactory.getInvoker((T) registry, type, url);
@@ -363,6 +364,7 @@ public class RegistryProtocol implements Protocol {
     }
 
     private <T> Invoker<T> doRefer(Cluster cluster, Registry registry, Class<T> type, URL url) {
+        // 这个directory把同一个serviceInterface对应的多个invoker管理起来提供概念上的化多为单一，供路由、均衡算法等使用
         // 创建 RegistryDirectory 实例
         RegistryDirectory<T> directory = new RegistryDirectory<T>(type, url);
         // 设置注册中心和协议
@@ -374,6 +376,7 @@ public class RegistryProtocol implements Protocol {
         // 生成服务消费者链接
         URL subscribeUrl = new URL(Constants.CONSUMER_PROTOCOL, parameters.remove(Constants.REGISTER_IP_KEY), 0, type.getName(), parameters);
 
+        // 注册自己
         // 注册服务消费者，在 consumers 目录下新节点
         if (!Constants.ANY_VALUE.equals(url.getServiceInterface())
                 && url.getParameter(Constants.REGISTER_KEY, true)) {
@@ -381,6 +384,7 @@ public class RegistryProtocol implements Protocol {
                     Constants.CHECK_KEY, String.valueOf(false)));
         }
 
+        // 订阅目标服务提供方
         // 订阅 providers、configurators、routers 等节点数据
         // 订阅provider注册中心节点信息，此处url需要携带providers参数
         directory.subscribe(subscribeUrl.addParameter(Constants.CATEGORY_KEY,
@@ -391,6 +395,8 @@ public class RegistryProtocol implements Protocol {
 
         Invoker invoker = cluster.join(directory);
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
+
+        //合并所有相同invoker
         return invoker;
     }
 
