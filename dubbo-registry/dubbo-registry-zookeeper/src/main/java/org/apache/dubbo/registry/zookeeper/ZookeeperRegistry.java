@@ -126,6 +126,11 @@ public class ZookeeperRegistry extends FailbackRegistry {
             // 服务注册，创建zk节点，如果 dynamic 配置的是true，创建的就是 zk 临时节点
             // 临时节点，这也就是zk注册的服务所在节点挂了之后其他客户端节点本地的服务列表会更新的原因，不会调用到不存在的服务，
             // 当然也存在zk临时节点删除，通知其他订阅这个节点的客户端时候出现网络抖动，zk会做处理确保一定能通知到
+
+            // 通过 Zookeeper 客户端创建节点，节点路径由 toUrlPath 方法生成，路径格式如下:
+            //   /${group}/${serviceInterface}/providers/${url}
+            // 比如
+            //   /dubbo/com.tianxiaobo.DemoService/providers/dubbo%3A%2F%2F127.0.0.1......
             zkClient.create(toUrlPath(url), url.getParameter(Constants.DYNAMIC_KEY, true));
         } catch (Throwable e) {
             throw new RpcException("Failed to register " + url + " to zookeeper " + getUrl() + ", cause: " + e.getMessage(), e);
@@ -191,6 +196,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                 zkClient.create(root, false);
 
                 // 向 Zookeeper ，Service 节点，发起订阅
+                // 从zk订阅到的信息,并添加子节点监听
                 List<String> services = zkClient.addChildListener(root, zkListener);
                 // 首次全量数据获取完成时，循环 Service 接口全名数组，发起该 Service 层的订阅
                 if (services != null && !services.isEmpty()) {
@@ -224,6 +230,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                         });
                         zkListener = listeners.get(listener);
                     }
+
                     // 创建 Type 节点。该节点为持久节点
                     zkClient.create(path, false);
                     // 向 Zookeeper ，PATH 节点，发起订阅
@@ -233,6 +240,7 @@ public class ZookeeperRegistry extends FailbackRegistry {
                         urls.addAll(toUrlsWithEmpty(url, path, children));
                     }
                 }
+
                 // 首次全量数据获取完成时，调用 `#notify(...)` 方法，回调 NotifyListener
                 notify(url, listener, urls);
             }

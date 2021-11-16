@@ -34,6 +34,11 @@ public interface Protocol {
     int getDefaultPort();
 
     /**
+     * 暴露服务接口
+     * 1. 协议在接收请求时，应记录请求来源方地址信息：RpcContext.getContext().setRemoteAddress();<br>
+     * 2. export()必须是幂等的，也就是暴露同一个URL的Invoker两次，和暴露一次没有区别。<br>
+     * 3. export()传入的Invoker由框架实现并传入，协议不需要关心。<br>
+     *
      * Export service for remote invocation: <br>
      * 1. Protocol should record request source address after receive a request:
      * RpcContext.getContext().setRemoteAddress();<br>
@@ -41,15 +46,17 @@ public interface Protocol {
      * export the same URL<br>
      * 3. Invoker instance is passed in by the framework, protocol needs not to care <br>
      *
-     * @param <T>     Service type
-     * @param invoker Service invoker
-     * @return exporter reference for exported service, useful for unexport the service later
-     * @throws RpcException thrown when error occurs during export the service, for example: port is occupied
+     * @param <T>     Service type   服务的类型
+     * @param invoker Service invoker  服务的执行体
+     * @return exporter reference for exported service, useful for unexport the service later   暴露服务的引用，用于取消暴露
+     * @throws RpcException thrown when error occurs during export the service, for example: port is occupied  当暴露服务出错时抛出，比如端口已占用
      */
     @Adaptive
     <T> Exporter<T> export(Invoker<T> invoker) throws RpcException;
 
     /**
+     * 获取接口调用的Invoker
+     *
      * Refer a remote service: <br>
      * 1. When user calls `invoke()` method of `Invoker` object which's returned from `refer()` call, the protocol
      * needs to correspondingly execute `invoke()` method of `Invoker` object <br>

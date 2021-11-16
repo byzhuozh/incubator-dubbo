@@ -40,9 +40,11 @@ public class DubboApplicationListener implements ApplicationListener<Application
 
     @Override
     public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        // 初始化或刷新ApplicationContext时引发的事件。
         if (applicationEvent instanceof ContextRefreshedEvent) {
             dubboBootstrap.start();
         } else if (applicationEvent instanceof ContextClosedEvent) {
+            // 关闭时触发
             dubboBootstrap.stop();
         }
     }

@@ -37,11 +37,13 @@ public class SpiExtensionFactory implements ExtensionFactory {
      */
     @Override
     public <T> T getExtension(Class<T> type, String name) {
+        // 要求type必须是一个接口，并且有@SPI注解。这是dubbo中SPI接口的标准配置
         if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {     // 校验是 @SPI
             ExtensionLoader<T> loader = ExtensionLoader.getExtensionLoader(type);
-            // 加载拓展接口对应的 ExtensionLoader 对象
+
+            // 返回的是扩展点名称的TreeSet集合
             if (!loader.getSupportedExtensions().isEmpty()) {
-                // 加载拓展对象
+                // 使用ExtensionLoader#getAdaptiveExtension()获取默认的实现类
                 return loader.getAdaptiveExtension();
             }
         }

@@ -41,8 +41,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(AbstractClusterInvoker.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractClusterInvoker.class);
+    // RegistryDirectory
     protected final Directory<T> directory;
 
     protected final boolean availablecheck;
@@ -225,12 +225,21 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
     public Result invoke(final Invocation invocation) throws RpcException {
         checkWhetherDestroyed();
         LoadBalance loadbalance = null;
+        //根据 method 加载 invokers
         List<Invoker<T>> invokers = list(invocation);
+
         if (invokers != null && !invokers.isEmpty()) {
+            //默认采用随机策略的 loadbalance
             loadbalance = ExtensionLoader.getExtensionLoader(LoadBalance.class).getExtension(invokers.get(0).getUrl()
                     .getMethodParameter(RpcUtils.getMethodName(invocation), Constants.LOADBALANCE_KEY, Constants.DEFAULT_LOADBALANCE));
         }
         RpcUtils.attachInvocationIdIfAsync(getUrl(), invocation);
+
+        /**
+         *  invocation:方法,参数类型，参数
+         *  invokers:此接口提供端的Invoker；
+         *  loadbalance:均衡负载
+         */
         return doInvoke(invocation, invokers, loadbalance);
     }
 
@@ -264,6 +273,7 @@ public abstract class AbstractClusterInvoker<T> implements Invoker<T> {
                                        LoadBalance loadbalance) throws RpcException;
 
     protected List<Invoker<T>> list(Invocation invocation) throws RpcException {
+        // directory --> RegistryDirectory
         List<Invoker<T>> invokers = directory.list(invocation);
         return invokers;
     }

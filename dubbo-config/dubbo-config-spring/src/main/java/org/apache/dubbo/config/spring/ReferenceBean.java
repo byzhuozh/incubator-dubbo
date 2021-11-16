@@ -63,6 +63,7 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
 
     @Override
     public Object getObject() throws Exception {
+        // spring ioc 依赖注入时会调用这个方法
         return get();
     }
 

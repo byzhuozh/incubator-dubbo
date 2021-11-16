@@ -91,7 +91,7 @@ public class DubboBeanDefinitionParser implements BeanDefinitionParser {
         /** ************************************************************************************  */
         // 生成 id 。不同的配置对象，会存在不同。
         String id = element.getAttribute("id");
-        if ((id == null || id.length() == 0) && required) {
+        if ((id == null || id.length() == 0) && required) {  //设置bean id
             String generatedBeanName = element.getAttribute("name");
             if (generatedBeanName == null || generatedBeanName.length() == 0) {
                 if (ProtocolConfig.class.equals(beanClass)) {

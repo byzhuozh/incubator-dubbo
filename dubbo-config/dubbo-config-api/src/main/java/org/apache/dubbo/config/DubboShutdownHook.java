@@ -65,14 +65,17 @@ public class DubboShutdownHook extends Thread {
         if (!destroyed.compareAndSet(false, true)) {
             return;
         }
-        // destroy all the registries
+        // 关闭所有的注册中心, 移除对注册中心数据的订阅或是删除在注册中心上注册的数据
         AbstractRegistryFactory.destroyAll();
-        // destroy all the protocols
+
+        // 关闭所有的server相关组件
         destroyProtocols();
     }
 
     /**
      * Destroy all the protocols.
+     *
+     * 销毁 Protocol 相关
      */
     private void destroyProtocols() {
         ExtensionLoader<Protocol> loader = ExtensionLoader.getExtensionLoader(Protocol.class);

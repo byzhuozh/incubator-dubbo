@@ -73,6 +73,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
         // Lock up the registry shutdown process
         LOCK.lock();
         try {
+            // 关闭注册中心
             for (Registry registry : getRegistries()) {
                 try {
                     registry.destroy();
@@ -103,7 +104,7 @@ public abstract class AbstractRegistryFactory implements RegistryFactory {
                 return registry;
             }
 
-            // 创建注册信息
+            // 缓存未命中，创建 Registry 实例
             registry = createRegistry(url);
             if (registry == null) {
                 throw new IllegalStateException("Can not create registry " + url);

@@ -27,6 +27,8 @@ import java.util.Collection;
 public interface ExchangeServer extends Server {
 
     /**
+     * 获取所有和client的Channel
+     *
      * get channels.
      *
      * @return channels
@@ -35,6 +37,8 @@ public interface ExchangeServer extends Server {
 
     /**
      * get channel.
+     *
+     * 获取指定Client的Channel
      *
      * @param remoteAddress
      * @return channel
