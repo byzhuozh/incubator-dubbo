@@ -71,6 +71,7 @@ public class UrlUtils {
         }
         String defaultUsername = defaults == null ? null : defaults.get("username");
         String defaultPassword = defaults == null ? null : defaults.get("password");
+        // 指定port端口地址
         int defaultPort = StringUtils.parseInteger(defaults == null ? null : defaults.get("port"));
         String defaultPath = defaults == null ? null : defaults.get("path");
         Map<String, String> defaultParameters = defaults == null ? null : new HashMap<String, String>(defaults);
@@ -93,6 +94,7 @@ public class UrlUtils {
         String host = u.getHost();
         int port = u.getPort();
         String path = u.getPath();
+        // 解析url后面的参数
         Map<String, String> parameters = new HashMap<String, String>(u.getParameters());
         if ((protocol == null || protocol.length() == 0) && defaultProtocol != null && defaultProtocol.length() > 0) {
             changed = true;
@@ -110,12 +112,15 @@ public class UrlUtils {
             changed = true;
             host = NetUtils.getLocalHost();
         }*/
+        // 如果url中端口<=0
         if (port <= 0) {
+            // 如果配置的port端口大于0就用默认端口
             if (defaultPort > 0) {
                 changed = true;
                 port = defaultPort;
             } else {  // 如果地址没有端口缺省为9090。FROM http://dubbo.io/books/dubbo-user-book/references/xml/dubbo-registry.html 文档。
                 changed = true;
+                // 否则就用9090端口
                 port = 9090;
             }
         }

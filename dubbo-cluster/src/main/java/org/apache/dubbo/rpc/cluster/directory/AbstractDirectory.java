@@ -47,7 +47,7 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
     private volatile boolean destroyed = false;
 
     private volatile URL consumerUrl;
-
+    // MockInvokersSelector
     private volatile List<Router> routers;
 
     public AbstractDirectory(URL url) {
@@ -72,11 +72,13 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
             throw new RpcException("Directory already destroyed .url: " + getUrl());
         }
         List<Invoker<T>> invokers = doList(invocation);
+
         List<Router> localRouters = this.routers; // local reference
         if (localRouters != null && !localRouters.isEmpty()) {
             for (Router router : localRouters) {
                 try {
                     if (router.getUrl() == null || router.getUrl().getParameter(Constants.RUNTIME_KEY, false)) {
+                        // router --> MockInvokersSelector
                         invokers = router.route(invokers, getConsumerUrl(), invocation);
                     }
                 } catch (Throwable t) {

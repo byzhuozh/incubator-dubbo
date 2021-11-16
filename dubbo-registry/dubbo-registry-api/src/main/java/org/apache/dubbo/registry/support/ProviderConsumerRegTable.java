@@ -59,7 +59,7 @@ public class ProviderConsumerRegTable {
     public static void registerProvider(Invoker invoker, URL registryUrl, URL providerUrl) {
         // 创建 ProviderInvokerWrapper 对象
         ProviderInvokerWrapper wrapperInvoker = new ProviderInvokerWrapper(invoker, registryUrl, providerUrl);
-        // 服务键
+        // service 唯一的名字 group/interface:version
         String serviceUniqueName = providerUrl.getServiceKey();
         // 添加到集合
         Set<ProviderInvokerWrapper> invokers = providerInvokers.get(serviceUniqueName);

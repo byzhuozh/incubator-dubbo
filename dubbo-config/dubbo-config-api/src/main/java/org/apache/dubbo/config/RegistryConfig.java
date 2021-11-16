@@ -52,6 +52,7 @@ public class RegistryConfig extends AbstractConfig {
 
     private String client;
 
+    // 容错
     private String cluster;
 
     private String group;
@@ -59,27 +60,34 @@ public class RegistryConfig extends AbstractConfig {
     private String version;
 
     // request timeout in milliseconds for register center
+    // 注册中心超时时间
     private Integer timeout;
 
     // session timeout in milliseconds for register center
+    // 注册中心session超时时间
     private Integer session;
 
     // file for saving register center dynamic list
+    // 注册中心动态列表保存文件
     private String file;
 
     // wait time before stop
+    // 停止等待时间
     private Integer wait;
 
     // whether to check if register center is available when boot up
     private Boolean check;
 
     // whether to allow dynamic service to register on the register center
+    // 服务是否允许动态注册到注册中心
     private Boolean dynamic;
 
     // whether to export service on the register center
+    // 是否允许注册服务在注册中心
     private Boolean register;
 
     // whether allow to subscribe service on the register center
+    // 是否允许订阅注册中心的服务
     private Boolean subscribe;
 
     // customized parameters

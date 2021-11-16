@@ -50,48 +50,67 @@ public class ProviderConfig extends AbstractServiceConfig {
     private String contextpath;
 
     // thread pool
+    // 线程池类型
     private String threadpool;
 
-    // thread pool size (fixed size)
+    // thread pool size (fixed size)  线程数
     private Integer threads;
 
     // IO thread pool size (fixed size)
+    // io线程池线程数，主要指netty的work线程池线程数，默认Math.min(Runtime.getRuntime().availableProcessors() + 1, 32)
     private Integer iothreads;
 
     // thread pool queue length
+    // 默认值0，dubbo建议任务直接处理不要加入队列
     private Integer queues;
 
     // max acceptable connections
+    // 默认值9，服务提供者的最大连接数
     private Integer accepts;
 
     // protocol codec
+    // 协议编解码支持，默认值dubbo
     private String codec;
 
     // charset
     private String charset;
 
     // payload max length
+    // 请求和响应的长度限制，单位为字节，默认8m
     private Integer payload;
 
     // buffer size
+    // 网络IO的缓冲区大小，默认8192
     private Integer buffer;
 
     // transporter
     private String transporter;
 
     // how information gets exchanged
+    // 信息交换方式 header，默认HeaderExchanger
+    // <dubbo:protocol exchanger=""/>
+    // <dubbo:provider exchanger=""/>
     private String exchanger;
 
     // thread dispatching mode
+    // 线程转发模型，all、connection、direct、execution、message，默认值all
+    //  all 所有消息都派发到线程池，包括请求、响应、连接事件、断开事件、心跳监测等
+    //  connection 在io线程上，将连接断开事件放入队列，有序逐个执行，其他消息派发到线程池
+    //  direct 所有消息都不派发到线程池，全部在io线程上直接执行
+    //  execution 只请求消息派发到线程池，不含响应，响应和其他连接断开事件，心跳检测等消息，直接在io线程上执行
+    //  message 只有请求响应消息派发到线程池，其他连接断开事件，心跳检测等消息，直接在io线程上执行
     private String dispatcher;
 
     // networker
+    // 网络连接器，multicast 广播方式，file从文件中读取host，对应<dubbo:provider、<dubbo:protocol network属性
     private String networker;
 
     // server impl
+    // server端协议, dubbo协议默认值是netty，http协议默认值是servlet
     private String server;
 
     // client impl
+    // client端协议，dubbo协议默认值netty，对应<dubbo:provider、<dubbo:ptotocol 标签 server、client属性
     private String client;
 
     // supported telnet commands, separated with comma.

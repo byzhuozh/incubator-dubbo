@@ -40,8 +40,8 @@ public interface Cluster {
      *
      * 基于 Directory ，创建 Invoker 对象，实现统一、透明的 Invoker 调用过程
      *
-     * @param directory Directory 对象
-     * @param <T>  泛型
+     * @param <T>
+     * @param directory
      * @return cluster invoker
      * @throws RpcException
      */

@@ -35,9 +35,10 @@ import java.util.List;
 public class MockClusterInvoker<T> implements Invoker<T> {
 
     private static final Logger logger = LoggerFactory.getLogger(MockClusterInvoker.class);
-
+    // RegistryDirectory
     private final Directory<T> directory;
 
+    // FailoverClusterInvoker
     private final Invoker<T> invoker;
 
     public MockClusterInvoker(Directory<T> directory, Invoker<T> invoker) {
@@ -68,10 +69,10 @@ public class MockClusterInvoker<T> implements Invoker<T> {
     @Override
     public Result invoke(Invocation invocation) throws RpcException {
         Result result = null;
-
+        // directory --> RegistryDirectory
         String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim();
-        if (value.length() == 0 || value.equalsIgnoreCase("false")) {
-            //no mock
+        if (value.length() == 0 || value.equalsIgnoreCase("false")) {  //没有mock
+            //no mock   invoker --> FailoverClusterInvoker
             result = this.invoker.invoke(invocation);
         } else if (value.startsWith("force")) {
             if (logger.isWarnEnabled()) {

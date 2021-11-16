@@ -136,15 +136,21 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
             return;
         } else {
             // double check to avoid dup close
+            // 双重锁校验，避免已经关闭
             destroyLock.lock();
             try {
                 if (super.isDestroyed()) {
                     return;
                 }
+                // 标记关闭
                 super.destroy();
+
+                // 移除出 `invokers`
                 if (invokers != null) {
                     invokers.remove(this);
                 }
+
+                // 关闭 ExchangeClient 们
                 for (ExchangeClient client : clients) {
                     try {
                         client.close(ConfigUtils.getServerShutdownTimeout());

@@ -29,6 +29,7 @@ public interface Invocation {
 
     /**
      * get method name.
+     * 获取方法名
      *
      * @return method name.
      * @serial
@@ -37,6 +38,7 @@ public interface Invocation {
 
     /**
      * get parameter types.
+     * 参数类型
      *
      * @return parameter types.
      * @serial
@@ -45,6 +47,7 @@ public interface Invocation {
 
     /**
      * get arguments.
+     * 调用参数
      *
      * @return arguments.
      * @serial
@@ -53,6 +56,7 @@ public interface Invocation {
 
     /**
      * get attachments.
+     *
      *
      * @return attachments.
      * @serial

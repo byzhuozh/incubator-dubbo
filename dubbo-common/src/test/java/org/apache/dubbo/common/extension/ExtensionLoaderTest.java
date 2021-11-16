@@ -71,8 +71,7 @@ public class ExtensionLoaderTest {
             ExtensionLoader.getExtensionLoader(null);
             fail();
         } catch (IllegalArgumentException expected) {
-            assertThat(expected.getMessage(),
-                    containsString("Extension type == null"));
+            assertThat(expected.getMessage(), containsString("Extension type == null"));
         }
     }
 

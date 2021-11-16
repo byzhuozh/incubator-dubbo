@@ -16,7 +16,6 @@
  */
 package org.apache.dubbo.config.spring.extension;
 
-import java.util.Set;
 import org.apache.dubbo.common.extension.ExtensionFactory;
 import org.apache.dubbo.common.extension.SPI;
 import org.apache.dubbo.common.logger.Logger;
@@ -25,6 +24,8 @@ import org.apache.dubbo.common.utils.ConcurrentHashSet;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
+
+import java.util.Set;
 
 /**
  * SpringExtensionFactory
@@ -52,18 +53,31 @@ public class SpringExtensionFactory implements ExtensionFactory {
         contexts.clear();
     }
 
+    /**
+     * 从spring容器中获取指定class类型和名称的对象
+     * @param type object type. 扩展点类型
+     * @param name object name. 扩展点名称
+     * @param <T> 扩展点class
+     * @return 扩展点
+     */
     @Override
     @SuppressWarnings("unchecked")
     public <T> T getExtension(Class<T> type, String name) {
 
-        //SPI should be get from SpiExtensionFactory
+        /*
+         * SPI should be get from SpiExtensionFactory
+         * 如果扩展类时一个接口，并且接口上由@SPI注解，就返回 null。
+         * 意思是：SPI接口的扩展点实现应该从SpiExtensionFactory中获取
+         */
+        // SPI should be get from SpiExtensionFactory
         if (type.isInterface() && type.isAnnotationPresent(SPI.class)) {
             return null;
         }
 
+        // 遍历Spring的上下文对象ApplicationContext
         for (ApplicationContext context : contexts) {
             if (context.containsBean(name)) {
-                // 获得属性
+                //通过接口实现的名称从上下文中获取接口的实例对象，如果有多个实现，默认获取第一个
                 Object bean = context.getBean(name);
                 // 判断类型
                 if (type.isInstance(bean)) {
@@ -76,6 +90,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
 
         for (ApplicationContext context : contexts) {
             try {
+                //通过接口类型从上下文中获取接口的实例对象，如果有多个实现，默认获取第一个
                 return context.getBean(type);
             } catch (NoUniqueBeanDefinitionException multiBeanExe) {
                 throw multiBeanExe;

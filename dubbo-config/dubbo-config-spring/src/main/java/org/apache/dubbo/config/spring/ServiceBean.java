@@ -114,22 +114,33 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         return service;
     }
 
+    /**
+     * Spring
+     *  AbstractApplicationContext#refresh()
+     *      --> finishRefresh();
+     *          --> publishEvent((ApplicationEvent)(new ContextRefreshedEvent(this)));  发布容器上下文刷新事件，此时spring 容器已经全部初始化完成
+     */
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (isDelay() && !isExported() && !isUnexported()) {
             if (logger.isInfoEnabled()) {
                 logger.info("The service ready on spring started. service: " + getInterface());
             }
+            // 接收到上下文刷新事件注册服务
             export();
         }
     }
 
     private boolean isDelay() {
+        // 获取 delay
         Integer delay = getDelay();
         ProviderConfig provider = getProvider();
         if (delay == null && provider != null) {
+            // 如果前面获取的 delay 为空，这里继续获取
             delay = provider.getDelay();
         }
+
+        // 判断 delay 是否为空，或者等于 -1
         return supportedApplicationListener && (delay == null || delay == -1);
     }
 
