@@ -450,7 +450,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
         if (isJvmRefer) {
             // 生成本地引用 URL，协议为 injvm
             URL url = new URL(Constants.LOCAL_PROTOCOL, NetUtils.LOCALHOST, 0, interfaceClass.getName()).addParameters(map);
-            // 调用 refer 方法构建 InjvmInvoker 实例
+            // 调用 refer 方法构建 InjvmInvoker 实例， refprotocol --> InjvmProtocol
             invoker = refprotocol.refer(interfaceClass, url);
             if (logger.isInfoEnabled()) {
                 logger.info("Using injvm service " + interfaceClass.getName());
@@ -458,7 +458,7 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
         // 远程引用
         } else {
-            // url 不为空，表明用户可能想进行点对点调用
+            // url 不为空，直连服务提供者地址
             if (url != null && url.length() > 0) { // user specified URL, could be peer-to-peer address, or register center's address.
                 // 当需要配置多个 url 时，可用分号进行分割，这里会进行切分
                 String[] us = Constants.SEMICOLON_SPLIT_PATTERN.split(url);
@@ -512,8 +512,9 @@ public class ReferenceConfig<T> extends AbstractReferenceConfig {
 
                 // 获取所有的 Invoker
                 for (URL url : urls) {
-                    // 通过 refprotocol 调用 refer 构建 Invoker，refprotocol 会在运行时
+                    // 通过 ref protocol 调用 refer 构建 Invoker，refprotocol 会在运行时
                     // 根据 url 协议头加载指定的 Protocol 实例，并调用实例的 refer 方法
+                    // refprotocol --> RegistryProtocol
                     invokers.add(refprotocol.refer(interfaceClass, url));
                     if (Constants.REGISTRY_PROTOCOL.equals(url.getProtocol())) {
                         registryURL = url; // use last registry url

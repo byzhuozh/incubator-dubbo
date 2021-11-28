@@ -683,6 +683,7 @@ public class ExtensionLoader<T> {
                     if (method.getName().startsWith("set")
                             && method.getParameterTypes().length == 1
                             && Modifier.isPublic(method.getModifiers())) {
+
                         // 获取 setter 方法参数类型
                         Class<?> pt = method.getParameterTypes()[0];
 
@@ -695,7 +696,6 @@ public class ExtensionLoader<T> {
                             if (object != null) {
                                 // 通过反射调用 setter 方法设置依赖
                                 method.invoke(instance, object);
-
                             }
                         } catch (Exception e) {
                             logger.error("fail to inject via method " + method.getName()

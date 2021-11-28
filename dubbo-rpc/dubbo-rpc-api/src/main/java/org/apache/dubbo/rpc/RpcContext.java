@@ -63,22 +63,50 @@ public class RpcContext {
         }
     };
 
+    /**
+     * 隐式参数集合
+     */
     private final Map<String, String> attachments = new HashMap<String, String>();
     private final Map<String, Object> values = new HashMap<String, Object>();
+
+    /**
+     * 异步调用 Future
+     */
     private Future<?> future;
 
+    /**
+     * 可调用服务的 URL 对象集合
+     */
     private List<URL> urls;
 
+    /**
+     * 调用服务的 URL 对象
+     */
     private URL url;
 
+    /**
+     * 方法名
+     */
     private String methodName;
 
+    /**
+     * 参数类型数组
+     */
     private Class<?>[] parameterTypes;
 
+    /**
+     * 参数值数组
+     */
     private Object[] arguments;
 
+    /**
+     * 服务消费者地址
+     */
     private InetSocketAddress localAddress;
 
+    /**
+     * 服务提供者地址
+     */
     private InetSocketAddress remoteAddress;
     @Deprecated
     private List<Invoker<?>> invokers;
@@ -89,7 +117,17 @@ public class RpcContext {
 
     // now we don't use the 'values' map to hold these objects
     // we want these objects to be as generic as possible
+    /**
+     * 请求
+     *
+     * 例如，在 RestProtocol
+     */
     private Object request;
+    /**
+     * 响应
+     *
+     * 例如，在 RestProtocol
+     */
     private Object response;
     private AsyncContext asyncContext;
 

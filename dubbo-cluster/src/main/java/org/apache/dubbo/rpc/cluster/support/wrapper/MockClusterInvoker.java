@@ -71,26 +71,31 @@ public class MockClusterInvoker<T> implements Invoker<T> {
         Result result = null;
         // directory --> RegistryDirectory
         String value = directory.getUrl().getMethodParameter(invocation.getMethodName(), Constants.MOCK_KEY, Boolean.FALSE.toString()).trim();
+        //若mock参数未配置或是配置为false，则不会开启Mock机制，直接调用底层的Invoker
         if (value.length() == 0 || value.equalsIgnoreCase("false")) {  //没有mock
             //no mock   invoker --> FailoverClusterInvoker
             result = this.invoker.invoke(invocation);
         } else if (value.startsWith("force")) {
+            // 若mock参数配置为force，则表示强制mock，直接调用doMockInvoke()方法
             if (logger.isWarnEnabled()) {
                 logger.info("force-mock: " + invocation.getMethodName() + " force-mock enabled , url : " + directory.getUrl());
             }
             //force:direct mock
             result = doMockInvoke(invocation, null);
         } else {
+            // 如果mock配置的不是force，那配置的就是fail，会继续调用Invoker对象的invoke()方法进行请求
             //fail-mock
             try {
                 result = this.invoker.invoke(invocation);
             } catch (RpcException e) {
                 if (e.isBiz()) {
+                    // 如果是业务异常，会直接抛出
                     throw e;
                 } else {
                     if (logger.isWarnEnabled()) {
                         logger.warn("fail-mock: " + invocation.getMethodName() + " fail-mock enabled , url : " + directory.getUrl(), e);
                     }
+                    // 如果是非业务异常，会调用doMockInvoke()方法返回mock结果
                     result = doMockInvoke(invocation, e);
                 }
             }
@@ -103,16 +108,20 @@ public class MockClusterInvoker<T> implements Invoker<T> {
         Result result = null;
         Invoker<T> minvoker;
 
+        // 调用selectMockInvoker()方法过滤得到MockInvoker
         List<Invoker<T>> mockInvokers = selectMockInvoker(invocation);
         if (mockInvokers == null || mockInvokers.isEmpty()) {
+            // 如果selectMockInvoker()方法未返回MockInvoker对象，则创建一个MockInvoker
             minvoker = (Invoker<T>) new MockInvoker(directory.getUrl());
         } else {
             minvoker = mockInvokers.get(0);
         }
         try {
+            // 调用MockInvoker.invoke()方法进行mock
             result = minvoker.invoke(invocation);
         } catch (RpcException me) {
             if (me.isBiz()) {
+                // 如果是业务异常，则在Result中设置该异常
                 result = new RpcResult(me.getCause());
             } else {
                 throw new RpcException(me.getCode(), getMockExceptionMessage(e, me), me.getCause());
@@ -144,6 +153,7 @@ public class MockClusterInvoker<T> implements Invoker<T> {
         List<Invoker<T>> invokers = null;
         //TODO generic invoker？
         if (invocation instanceof RpcInvocation) {
+            // 将Invocation附属信息中的invocation.need.mock属性设置为true
             //Note the implicit contract (although the description is added to the interface declaration, but extensibility is a problem. The practice placed in the attachement needs to be improved)
             ((RpcInvocation) invocation).setAttachment(Constants.INVOCATION_NEED_MOCK, Boolean.TRUE.toString());
             //directory will return a list of normal invokers if Constants.INVOCATION_NEED_MOCK is present in invocation, otherwise, a list of mock invokers will return.
