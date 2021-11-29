@@ -37,15 +37,19 @@ public class MockInvokersSelector implements Router {
     public <T> List<Invoker<T>> route(final List<Invoker<T>> invokers,
                                       URL url, final Invocation invocation) throws RpcException {
         if (invocation.getAttachments() == null) {
+            // attachments为null，会过滤掉MockInvoker，只返回正常的Invoker对象
             return getNormalInvokers(invokers);
         } else {
             String value = invocation.getAttachments().get(Constants.INVOCATION_NEED_MOCK);
             if (value == null)
+                // invocation.need.mock为null，会过滤掉MockInvoker，只返回正常的Invoker对象
                 return getNormalInvokers(invokers);
             else if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+                // invocation.need.mock为true，会过滤掉MockInvoker，只返回正常的Invoker对象
                 return getMockedInvokers(invokers);
             }
         }
+        // invocation.need.mock为false，则会将MockInvoker和正常的Invoker一起返回
         return invokers;
     }
 

@@ -478,7 +478,7 @@ public abstract class AbstractRegistry implements Registry {
             categoryNotified.put(category, categoryList);
             // 保存到文件
             saveProperties(url);
-            // 通知监听器
+            // 通知监听器  RegistryDirectory.notify
             listener.notify(categoryList);
         }
     }

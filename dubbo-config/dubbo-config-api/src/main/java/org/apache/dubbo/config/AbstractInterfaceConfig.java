@@ -345,6 +345,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 throw new IllegalStateException("No such constructor \"public " + localClass.getSimpleName() + "(" + interfaceClass.getName() + ")\" in local implementation class " + localClass.getName());
             }
         }
+
         if (ConfigUtils.isNotEmpty(stub)) {
             Class<?> localClass = ConfigUtils.isDefault(stub) ? ReflectUtils.forName(interfaceClass.getName() + "Stub") : ReflectUtils.forName(stub);
             if (!interfaceClass.isAssignableFrom(localClass)) {
@@ -356,6 +357,7 @@ public abstract class AbstractInterfaceConfig extends AbstractMethodConfig {
                 throw new IllegalStateException("No such constructor \"public " + localClass.getSimpleName() + "(" + interfaceClass.getName() + ")\" in local implementation class " + localClass.getName());
             }
         }
+
         if (ConfigUtils.isNotEmpty(mock)) {
             if (mock.startsWith(Constants.RETURN_PREFIX)) {
                 String value = mock.substring(Constants.RETURN_PREFIX.length());

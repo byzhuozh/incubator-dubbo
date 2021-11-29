@@ -71,13 +71,17 @@ public abstract class AbstractDirectory<T> implements Directory<T> {
         if (destroyed) {
             throw new RpcException("Directory already destroyed .url: " + getUrl());
         }
+
+        // 通过子类获取invoker列表
         List<Invoker<T>> invokers = doList(invocation);
 
+        // 获取路由信息
         List<Router> localRouters = this.routers; // local reference
         if (localRouters != null && !localRouters.isEmpty()) {
             for (Router router : localRouters) {
                 try {
                     if (router.getUrl() == null || router.getUrl().getParameter(Constants.RUNTIME_KEY, false)) {
+                        // 对不符合路由规则的invokers进行过滤
                         // router --> MockInvokersSelector
                         invokers = router.route(invokers, getConsumerUrl(), invocation);
                     }
