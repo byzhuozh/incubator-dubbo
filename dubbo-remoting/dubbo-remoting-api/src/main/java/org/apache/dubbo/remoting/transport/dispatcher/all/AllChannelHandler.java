@@ -36,6 +36,7 @@ public class AllChannelHandler extends WrappedChannelHandler {
         super(handler, url);
     }
 
+    // 链接事件，交给业务线程池处理
     @Override
     public void connected(Channel channel) throws RemotingException {
         ExecutorService cexecutor = getExecutorService();
@@ -46,6 +47,7 @@ public class AllChannelHandler extends WrappedChannelHandler {
         }
     }
 
+    // 链接断开事件，交给业务线程池处理
     @Override
     public void disconnected(Channel channel) throws RemotingException {
         ExecutorService cexecutor = getExecutorService();
@@ -56,6 +58,7 @@ public class AllChannelHandler extends WrappedChannelHandler {
         }
     }
 
+    // 请求响应事件，交给业务线程池处理
     @Override
     public void received(Channel channel, Object message) throws RemotingException {
         ExecutorService cexecutor = getExecutorService();
@@ -79,6 +82,7 @@ public class AllChannelHandler extends WrappedChannelHandler {
         }
     }
 
+    // 异常处理事件，交给业务线程池处理
     @Override
     public void caught(Channel channel, Throwable exception) throws RemotingException {
         ExecutorService cexecutor = getExecutorService();

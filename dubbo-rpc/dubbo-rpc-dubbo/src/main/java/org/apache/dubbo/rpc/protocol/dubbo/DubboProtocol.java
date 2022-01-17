@@ -90,12 +90,15 @@ public class DubboProtocol extends AbstractProtocol {
     private final ConcurrentMap<String, String> stubServiceMethodsMap = new ConcurrentHashMap<String, String>();
     private ExchangeHandler requestHandler = new ExchangeHandlerAdapter() {
 
+        // 处理不需要返回值的请求
         @Override
         public CompletableFuture<Object> reply(ExchangeChannel channel, Object message) throws RemotingException {
             if (message instanceof Invocation) {
                 Invocation inv = (Invocation) message;
+                // 1. 获取 invoker 实例
                 Invoker<?> invoker = getInvoker(channel, inv);
                 // need to consider backward-compatibility if it's a callback
+                // 如果当前服务是回调服务，则校验回调方法是否存在
                 if (Boolean.TRUE.toString().equals(inv.getAttachments().get(IS_CALLBACK_SERVICE_INVOKE))) {
                     String methodsStr = invoker.getUrl().getParameters().get("methods");
                     boolean hasMethod = false;
@@ -118,18 +121,24 @@ public class DubboProtocol extends AbstractProtocol {
                         return null;
                     }
                 }
+                // 获取 rpc 上下文
                 RpcContext rpcContext = RpcContext.getContext();
                 boolean supportServerAsync = invoker.getUrl().getMethodParameter(inv.getMethodName(), Constants.ASYNC_KEY, false);
                 if (supportServerAsync) {
                     CompletableFuture<Object> future = new CompletableFuture<>();
                     rpcContext.setAsyncContext(new AsyncContextImpl(future));
                 }
+                // 设置远端调用地址
                 rpcContext.setRemoteAddress(channel.getRemoteAddress());
+                // 2. 通过Invoker调用方法
                 Result result = invoker.invoke(inv);
 
+                // 3. 写回结果
+                // 如果结果为 AsyncRpcResult类型则说明为服务提供方的异步执行
                 if (result instanceof AsyncRpcResult) {
                     return ((AsyncRpcResult) result).getResultFuture().thenApply(r -> (Object) r);
                 } else {
+                    // 否则为同步执行，将结果转换为 CompletableFuture
                     return CompletableFuture.completedFuture(result);
                 }
             }
@@ -138,8 +147,10 @@ public class DubboProtocol extends AbstractProtocol {
                     + ", channel: consumer: " + channel.getRemoteAddress() + " --> provider: " + channel.getLocalAddress());
         }
 
+        // 处理需要返回值的请求
         @Override
         public void received(Channel channel, Object message) throws RemotingException {
+            // 如果消息类型是 Invocation 则调用 reply 方法，一般是 RpcInvocation
             if (message instanceof Invocation) {
                 reply((ExchangeChannel) channel, message);
             } else {
@@ -225,6 +236,7 @@ public class DubboProtocol extends AbstractProtocol {
         int port = channel.getLocalAddress().getPort();
         String path = inv.getAttachments().get(Constants.PATH_KEY);
         // if it's callback service on client side
+        // 本地存根和回调方法处理
         isStubServiceInvoke = Boolean.TRUE.toString().equals(inv.getAttachments().get(Constants.STUB_EVENT_KEY));
         if (isStubServiceInvoke) {
             port = channel.getRemoteAddress().getPort();
@@ -235,13 +247,21 @@ public class DubboProtocol extends AbstractProtocol {
             path = inv.getAttachments().get(Constants.PATH_KEY) + "." + inv.getAttachments().get(Constants.CALLBACK_SERVICE_KEY);
             inv.getAttachments().put(IS_CALLBACK_SERVICE_INVOKE, Boolean.TRUE.toString());
         }
+
+        // 获取服务key
+        // 计算 service key，格式为 groupName/serviceName:serviceVersion:port。比如：
+        //   dubbo/com.alibaba.dubbo.demo.DemoService:1.0.0:20880
         String serviceKey = serviceKey(port, path, inv.getAttachments().get(Constants.VERSION_KEY), inv.getAttachments().get(Constants.GROUP_KEY));
 
+        // 从 exporterMap 查找与 serviceKey 相对应的 DubboExporter 对象，
+        // 服务导出过程中会将 <serviceKey, DubboExporter> 映射关系存储到 exporterMap 集合中
+        // 在服务暴露过程中我们知道，DubboProtocol 将暴露的服务保存到了 exporterMap 中。这里获取到了暴露服务的 exporter
         DubboExporter<?> exporter = (DubboExporter<?>) exporterMap.get(serviceKey);
 
         if (exporter == null)
             throw new RemotingException(channel, "Not found exported service: " + serviceKey + " in " + exporterMap.keySet() + ", may be version or group mismatch " + ", channel: consumer: " + channel.getRemoteAddress() + " --> provider: " + channel.getLocalAddress() + ", message:" + inv);
 
+        // 从exporter 中获取到 invoker
         return exporter.getInvoker();
     }
 
