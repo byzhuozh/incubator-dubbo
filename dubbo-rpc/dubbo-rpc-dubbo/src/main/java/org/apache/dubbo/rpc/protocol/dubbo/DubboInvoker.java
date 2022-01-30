@@ -71,6 +71,7 @@ public class DubboInvoker<T> extends AbstractInvoker<T> {
         RpcInvocation inv = (RpcInvocation) invocation;
         // 获得方法名
         final String methodName = RpcUtils.getMethodName(invocation);
+
         // 获得 `path`( 服务名 )，`version`
         inv.setAttachment(Constants.PATH_KEY, getUrl().getPath());
         inv.setAttachment(Constants.VERSION_KEY, version);

@@ -306,7 +306,6 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             }
 
             // 对 interfaceClass，以及 <dubbo:method> 必要字段进行检查
-            // 对 interfaceClass，以及 <dubbo:method> 必要字段进行检查
             checkInterfaceAndMethods(interfaceClass, methods);
 
             // 对 ref 合法性进行检测
