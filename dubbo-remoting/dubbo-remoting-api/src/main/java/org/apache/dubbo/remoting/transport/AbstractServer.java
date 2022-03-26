@@ -197,12 +197,15 @@ public abstract class AbstractServer extends AbstractEndpoint implements Server 
             return;
         }
 
+        // 超过上限，关闭新的链接
         Collection<Channel> channels = getChannels();
         if (accepts > 0 && channels.size() > accepts) {
             logger.error("Close channel " + ch + ", cause: The server " + ch.getLocalAddress() + " connections greater than max config " + accepts);
             ch.close();
             return;
         }
+
+        // 连接
         super.connected(ch);
     }
 

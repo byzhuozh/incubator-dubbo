@@ -52,5 +52,4 @@ public class FixedThreadPool implements ThreadPool {
                                 : new LinkedBlockingQueue<Runnable>(queues)),
                 new NamedInternalThreadFactory(name, true), new AbortPolicyWithReport(name, url));
     }
-
 }

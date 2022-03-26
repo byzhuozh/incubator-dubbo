@@ -26,32 +26,33 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * EagerThreadPoolExecutor
+ *
+ * 当所有核心线程数都处于忙碌状态，优先创建新线程执行任务
  */
 public class EagerThreadPoolExecutor extends ThreadPoolExecutor {
 
     /**
      * task count
+     * 记录正在执行+队列等待执行的任务
      */
     private final AtomicInteger submittedTaskCount = new AtomicInteger(0);
 
-    public EagerThreadPoolExecutor(int corePoolSize,
-                                   int maximumPoolSize,
-                                   long keepAliveTime,
-                                   TimeUnit unit, TaskQueue<Runnable> workQueue,
+    public EagerThreadPoolExecutor(int corePoolSize,   //默认值0
+                                   int maximumPoolSize,    //默认无限大
+                                   long keepAliveTime,  //默认1分钟
+                                   TimeUnit unit, TaskQueue<Runnable> workQueue,  //默认容量为1
                                    ThreadFactory threadFactory,
-                                   RejectedExecutionHandler handler) {
+                                   RejectedExecutionHandler handler) {  //AbortPolicyWithReport 拒绝策略，会打印堆栈到指定路径
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
     }
 
-    /**
-     * @return current tasks which are executed
-     */
     public int getSubmittedTaskCount() {
         return submittedTaskCount.get();
     }
 
     @Override
     protected void afterExecute(Runnable r, Throwable t) {
+        // 执行任务数依次递减
         submittedTaskCount.decrementAndGet();
     }
 
@@ -64,6 +65,7 @@ public class EagerThreadPoolExecutor extends ThreadPoolExecutor {
         //执行任务前，submittedTaskCount++
         submittedTaskCount.incrementAndGet();
         try {
+            //调用JDK原生线程池执行
             super.execute(command);
         } catch (RejectedExecutionException rx) {
             // retry to offer the task into queue.
@@ -76,6 +78,7 @@ public class EagerThreadPoolExecutor extends ThreadPoolExecutor {
                     throw new RejectedExecutionException("Queue capacity is full.", rx);
                 }
             } catch (InterruptedException x) {
+                // 提交失败，之前的加1要扣减回来
                 submittedTaskCount.decrementAndGet();
                 throw new RejectedExecutionException(x);
             }

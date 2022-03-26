@@ -392,7 +392,7 @@ public class RegistryProtocol implements Protocol {
                         + "," + Constants.CONFIGURATORS_CATEGORY
                         + "," + Constants.ROUTERS_CATEGORY));
 
-
+        // MockClusterInvoker
         Invoker invoker = cluster.join(directory);
         ProviderConsumerRegTable.registerConsumer(invoker, url, subscribeUrl, directory);
 

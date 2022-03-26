@@ -208,7 +208,7 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             return;
         }
 
-        // 延迟暴露
+        // delay > 0，延时导出服务
         if (delay != null && delay > 0) {
             delayExportExecutor.schedule(new Runnable() {
                 @Override
@@ -239,11 +239,13 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
             return;
         }
         exported = true;
+
         // 校验接口名非空
         if (interfaceName == null || interfaceName.length() == 0) {
             throw new IllegalStateException("<dubbo:service interface=\"\" /> interface not allow null!");
         }
 
+        // 检测 provider 是否为空，为空则新建一个，并通过系统变量为其初始化
         // 从系统变量读取默认配置，拼接属性配置（环境变量 + properties 属性）到 ProviderConfig 对象
         checkDefault();
 
@@ -288,21 +290,25 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
 
         // 检测 ref 是否泛化服务类型
         if (ref instanceof GenericService) {
+            // 设置 interfaceClass 为 GenericService.class
             interfaceClass = GenericService.class;
             if (StringUtils.isEmpty(generic)) {
                 // 设置 generic = "true"
                 generic = Boolean.TRUE.toString();
             }
-        } else {  // ref 非 GenericService 类型
+        } else {
+            // ref 非 GenericService 类型
             try {
                 // 加载接口类
                 interfaceClass = Class.forName(interfaceName, true, Thread.currentThread().getContextClassLoader());
             } catch (ClassNotFoundException e) {
                 throw new IllegalStateException(e.getMessage(), e);
             }
+
             // 对 interfaceClass，以及 <dubbo:method> 必要字段进行检查
             checkInterfaceAndMethods(interfaceClass, methods);
 
+            // 对 ref 合法性进行检测
             // 检查接口的引用是否为null，引用类型是接口的实现类
             checkRef();
 
@@ -371,6 +377,9 @@ public class ServiceConfig<T> extends AbstractServiceConfig {
         ProviderModel providerModel = new ProviderModel(getUniqueServiceName(), this, ref);
 
         // 注册服务提供者模式
+        // ProviderModel 表示服务提供者模型，此对象中存储了和服务提供者相关的信息。
+        // 比如服务的配置信息，服务实例等。每个被导出的服务对应一个 ProviderModel。
+        // ApplicationModel 持有所有的 ProviderModel。
         ApplicationModel.initProviderModel(getUniqueServiceName(), providerModel);
     }
 
